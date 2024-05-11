@@ -6,7 +6,7 @@ function Layout() {
   const { authenticated, user } = usePrivy();
   const wallet = user?.wallet;
   return (
-    <div className="">
+    <div className="container">
       <div>
         <NavBar />
       </div>
