@@ -1,5 +1,5 @@
-import { useEffect } from "react";
 import { usePrivy } from "@privy-io/react-auth";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 function NavBar() {
   const navigate = useNavigate();
@@ -24,6 +24,7 @@ function NavBar() {
         <>
           <h3 className="text-white text-center p-5 font-bold">FriendTool</h3>
           <h3 className="text-white text-center p-5 font-bold">Uniswap</h3>
+          <h3 className="text-white text-center p-5 font-bold">Balance</h3>
 
           <button
             className="text-white p-5 font-bold border border-slate-500 text-[10px] rounded-full w-[200px] overflow-hidden"

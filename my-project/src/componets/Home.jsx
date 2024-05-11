@@ -1,13 +1,14 @@
-import TrendingFriends from "./TrendingFriends";
 import propTypes from "prop-types";
 import { GetTrendingFriends } from "../requests/friendCalls";
+import TrendingFriends from "./TrendingFriends";
+import axios from "axios";
 function Home() {
-  const trendingFriends = GetTrendingFriends();
+  const trendingFriends = GetTrendingFriends(axios);
   console.log(trendingFriends);
 
   return (
-    <div>
-      <div className="border text-[30px] text-center p-5">
+    <div className="">
+      <div className="text-[30px] text-center p-5 ">
         <div className="text-center">
           <h3 className="text-white text-[20px] font-mono">
             Say goodbye to external web3 apps. Seamlessley mint & burn
@@ -22,7 +23,7 @@ function Home() {
           </div>
         </div>
       </div>
-      <div className="container mt-10">
+      <div className=" mt-10">
         <TrendingFriends data={trendingFriends} />
       </div>
     </div>
