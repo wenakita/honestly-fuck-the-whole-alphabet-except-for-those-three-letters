@@ -1,9 +1,8 @@
 import propTypes from "prop-types";
 import { GetTrendingFriends } from "../requests/friendCalls";
 import TrendingFriends from "./TrendingFriends";
-import axios from "axios";
 function Home() {
-  const trendingFriends = GetTrendingFriends(axios);
+  const trendingFriends = GetTrendingFriends();
   console.log(trendingFriends);
 
   return (

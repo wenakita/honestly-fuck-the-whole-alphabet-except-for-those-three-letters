@@ -54,7 +54,14 @@ function TrendingFriends(props) {
                         </div>
                       </button>
                       <button className="border border-slate-500 rounded-xl p-2.5 text-[10px]">
-                        Chart
+                        <div className="flex justify-center">
+                          <h3 className="text-[10px] mt-1">Chart</h3>
+                          <img
+                            src="https://media0.giphy.com/media/J2awouDsf23R2vo2p5/giphy.gif?cid=6c09b9528hc0btlg9yo7v4fnfa4c0amgumd8n075941rgt12&ep=v1_internal_gif_by_id&rid=giphy.gif&ct=e"
+                            alt=""
+                            className="w-5 h-5"
+                          />
+                        </div>
                       </button>
                       <button className="border border-slate-500 rounded-xl p-2.5 text-[10px]">
                         <div className="flex justify-center">

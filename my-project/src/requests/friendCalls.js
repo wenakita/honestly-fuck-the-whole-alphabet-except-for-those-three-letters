@@ -1,13 +1,15 @@
 import { useState, useEffect } from "react";
 const jwt = import.meta.env.VITE_FRIEND_TECH_JWT;
 console.log(jwt);
-export function GetTrendingFriends(axios) {
+export function GetTrendingFriends() {
   const [trendingUsers, setTrendingUsers] = useState([]);
   useEffect(() => {
-    axios
-      .get("https://prod-api.kosetto.com/lists/top-by-price")
+    fetch("https://prod-api.kosetto.com/lists/top-by-price")
       .then(function (results) {
-        setTrendingUsers(results.data.users);
+        return results.json();
+      })
+      .then(function (data) {
+        setTrendingUsers(data.users);
       })
       .catch(function (error) {
         console.log(error);
