@@ -28,7 +28,7 @@ function SearchBar() {
       </svg>
       <input
         type="text"
-        className="text-white border border-slate-500 bg-stone-800 rounded-xl w-[50%]"
+        className="text-white border border-slate-500 bg-stone-800 rounded-xl w-[300px]"
         onChange={(e) => {
           console.log(e.target.value);
           setInput(e.target.value);
