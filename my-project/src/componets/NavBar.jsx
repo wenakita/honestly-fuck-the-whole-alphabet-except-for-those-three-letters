@@ -24,13 +24,16 @@ function NavBar() {
         <>
           <h3 className="text-white text-center p-5 font-bold">FriendTool</h3>
           <h3 className="text-white text-center p-5 font-bold">Uniswap</h3>
+
+          <h3 className="text-white text-center p-5 font-bold">Deposit</h3>
+
           <h3 className="text-white text-center p-5 font-bold">Balance</h3>
 
           <button
-            className="text-white p-5 font-bold border border-slate-500 text-[10px] rounded-full w-[200px] overflow-hidden"
+            className="text-white border p-3 h-[50px] me-10 rounded-xl border-slate-500"
             onClick={logout}
           >
-            {address}
+            Logout
           </button>
         </>
       ) : null}
