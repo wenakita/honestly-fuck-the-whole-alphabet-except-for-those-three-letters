@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.jsx";
 import { PrivyProvider } from "@privy-io/react-auth";
+import { base } from "viem/chains";
 import "./index.css";
 console.log(import.meta.env.VITE_NEXT_PUBLIC_PRIVY_APP_ID);
 ReactDOM.createRoot(document.getElementById("root")).render(
@@ -13,6 +14,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         appearance: {
           theme: "dark",
         },
+        defaultChain: base,
       }}
     >
       <App />

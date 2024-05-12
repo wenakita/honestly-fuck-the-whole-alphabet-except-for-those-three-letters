@@ -1,7 +1,14 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 function SearchBar() {
-  useEffect(() => {}, []);
+  const [input, setInput] = useState("");
+  useEffect(() => {
+    if (input.includes("0x")) {
+      console.log("Search address");
+    } else {
+      console.log("Search user");
+    }
+  }, [input]);
   return (
     <div className="flex justify-center gap-2">
       <svg
@@ -22,6 +29,10 @@ function SearchBar() {
       <input
         type="text"
         className="text-white border border-slate-500 bg-stone-800 rounded-xl w-[500px]"
+        onChange={(e) => {
+          console.log(e.target.value);
+          setInput(e.target.value);
+        }}
       />
     </div>
   );
