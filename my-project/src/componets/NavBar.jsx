@@ -13,7 +13,7 @@ function NavBar() {
   }, [authenticated, wallet]);
   return (
     <div
-      className={`border border-slate-500 p-2 ${authenticated && wallet ? "flex justify-between" : null}`}
+      className={`border border-slate-500 p-2 text-[10px] ${authenticated && wallet ? "flex justify-between" : null}`}
     >
       <img
         src="https://dd.dexscreener.com/ds-data/tokens/base/0xddf7d080c82b8048baae54e376a3406572429b4e.png?size=lg&key=18ea46"

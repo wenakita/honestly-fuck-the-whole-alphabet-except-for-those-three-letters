@@ -1,14 +1,43 @@
 import { useEffect, useState } from "react";
-
+import { SearchByContract, SearchByUser } from "../requests/friendCalls";
+import { uintFormat } from "../formatters/format";
 function SearchBar() {
   const [input, setInput] = useState("");
+  const [activateResults, setActivateResults] = useState(false);
+  const [caResults, setCaResults] = useState(null);
+  const [userResults, setUserResults] = useState(null);
+
+  const [resultType, setResultType] = useState("user");
   useEffect(() => {
     if (input.includes("0x")) {
       console.log("Search address");
+      setResultType("contract");
+      fetchContract();
     } else {
       console.log("Search user");
+      setResultType("user");
+      fetchUser();
     }
   }, [input]);
+  async function fetchContract() {
+    const results = await SearchByContract(input);
+    console.log(results);
+    if (results?.message) {
+      setCaResults(null);
+    } else {
+      setCaResults(results);
+    }
+  }
+
+  async function fetchUser() {
+    const results = await SearchByUser(input);
+    console.log(results);
+    if (results?.message) {
+      setUserResults(null);
+    } else {
+      setUserResults(results);
+    }
+  }
   return (
     <div className="flex justify-center gap-2">
       <svg
@@ -33,7 +62,74 @@ function SearchBar() {
           console.log(e.target.value);
           setInput(e.target.value);
         }}
+        onClick={() => {
+          setActivateResults(true);
+        }}
       />
+
+      {activateResults ? (
+        <div className="border absolute mt-7 w-[300px] bg-black border-slate-500 ms-5">
+          <div className=" flex justify-end text-white me-3">
+            <button
+              onClick={() => {
+                setActivateResults(false);
+                setCaResults(null);
+                setUserResults(null);
+              }}
+            >
+              X
+            </button>
+          </div>
+          {resultType === "contract" ? (
+            <>
+              {caResults !== null ? (
+                <div className="border border-slate-500  text-white text-center">
+                  <div className="border border-slate-500 p-3 grid grid-cols-3">
+                    <div>
+                      <div className="flex justify-start gap-2">
+                        <img
+                          src={caResults?.ftPfpUrl}
+                          alt=""
+                          className="w-5 h-5 rounded-full"
+                        />
+                        <h3 className="text-whit text-[10px]">
+                          {caResults?.ftName}
+                        </h3>
+                      </div>
+                    </div>
+                    <div>
+                      <h3 className="text-white text-[10px]">
+                        {uintFormat(caResults?.displayPrice)}
+                      </h3>
+                    </div>
+                    <div>
+                      <h3 className="text-white text-[10px]">
+                        Holders: {caResults?.holderCount}
+                      </h3>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="border border-slate-500  text-white text-center">
+                  No contracts found
+                </div>
+              )}
+            </>
+          ) : (
+            <>
+              {userResults !== null ? (
+                <div className="border border-slate-500 text-white text-center">
+                  users found
+                </div>
+              ) : (
+                <div className="border border-slate-500 text-white text-center">
+                  no users found
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      ) : null}
     </div>
   );
 }
