@@ -7,7 +7,7 @@ function Layout() {
   const wallet = user?.wallet;
   return (
     <div className="container">
-      <div>
+      <div className="flex justify-center">
         <NavBar />
       </div>
       {authenticated && wallet ? (
