@@ -1,9 +1,9 @@
-import React from "react";
 import "./App.css";
 import { HashRouter, Routes, Route } from "react-router-dom";
 import Layout from "./componets/Layout";
 import Portal from "./componets/Portal";
 import Home from "./componets/Home";
+import Friend from "./componets/Friend";
 function App() {
   return (
     <HashRouter>
@@ -11,6 +11,7 @@ function App() {
         <Route element={<Layout />}>
           <Route path="/" element={<Portal />} />
           <Route path="/home" element={<Home />} />
+          <Route path="/friend/:address" element={<Friend />} />
         </Route>
       </Routes>
     </HashRouter>

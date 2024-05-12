@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { SearchByContract, SearchByUser } from "../requests/friendCalls";
 import { uintFormat } from "../formatters/format";
+import { Link } from "react-router-dom";
 function SearchBar() {
   const [input, setInput] = useState("");
   const [activateResults, setActivateResults] = useState(false);
@@ -84,7 +85,10 @@ function SearchBar() {
             <>
               {caResults !== null ? (
                 <div className="border border-slate-500  text-white text-center">
-                  <div className="border border-slate-500 p-3 grid grid-cols-3">
+                  <Link
+                    to={`/friend/${caResults?.address}`}
+                    className="border border-slate-500 p-3 grid grid-cols-3"
+                  >
                     <div>
                       <div className="flex justify-start gap-2">
                         <img
@@ -107,7 +111,7 @@ function SearchBar() {
                         Holders: {caResults?.holderCount}
                       </h3>
                     </div>
-                  </div>
+                  </Link>
                 </div>
               ) : (
                 <div className="border border-slate-500  text-white text-center">
@@ -121,7 +125,8 @@ function SearchBar() {
                 <div className="border border-slate-500 text-white text-center">
                   {userResults.map((item) => {
                     return (
-                      <div
+                      <Link
+                        to={`friend/${item?.address}`}
                         className="border border-slate-500 p-3 grid grid-cols-3 text-white"
                         key={item}
                       >
@@ -147,7 +152,7 @@ function SearchBar() {
                             </h3>
                           </div>
                         </div>
-                      </div>
+                      </Link>
                     );
                   })}
                 </div>
@@ -165,22 +170,3 @@ function SearchBar() {
 }
 
 export default SearchBar;
-
-// [
-//   {
-//     address: '0x7b202496c103da5bedfe17ac8080b49bd0a333f1',
-//     ftPfpUrl:
-//       'https://d3egfmvgqzu76k.cloudfront.net/pfp-images/0x7b202496c103da5bedfe17ac8080b49bd0a333f1/35134801v4w26w52w8?Expires=1815491840&Key-Pair-Id=K11ON08J8XW8N0&Signature=Dc7jXos7beznEHBK8mYOUwzSGq25sefkTEH8m~ZG6i1UnSg4grXiRw6TJiFu3p6eswkLCeuEt0b2~6pPRQIKHaWp-ZfoTcIXEYZ5mYZUIRD9x9TcjHGReBlzAbWAuTQX1geZaNPszdkNWmaZqmcQoghBTw8JL36naWIQQJqjsDplGkElM9eiyLNBo~WW5vPmQX6l5JEzf-fsTZQytDQ2GIjknfuZdQAbOLyWhtv3AUQjvhAMRHk31qBWAqsgUkfG6qD-dolqpflgiV8aMaRHqxRVvTm708eu5cS4EU5my4EsGoG9qzc~3uUUBG7mpc7eotBivaFkkcBsytGKhtHqXQ__',
-//     ftUsername: 'GODDOG',
-//     ftName: 'GODDOG',
-//     displayPrice: '39062500000000000'
-//   },
-//   {
-//     address: '0x9245d4e789cf9ef4a2ad1802ad9f86ded34ecdcb',
-//     ftPfpUrl:
-//       'https://d3egfmvgqzu76k.cloudfront.net/pfp-images/0x9245d4e789cf9ef4a2ad1802ad9f86ded34ecdcb/19635231qxx32g9smws?Expires=1815491840&Key-Pair-Id=K11ON08J8XW8N0&Signature=J2ILEMl4YFLAPYj9X1kh6gFbNfTWRrKL~8hFvL6Oi1RyfyXaT8bpEwZAqtk~gK2M0AsqzBBsBFbHmOjiUbKTM4pwmR7T3y8PggSfitZoPq4-Rh7IU3QU5AqhHMp4VlIkg8AXhEoFDn8gXGAE8g3UQWnjpmZFv9OXigfPNJfoCmUdXWCxbJ6bxg7~Y-Mlhifex-qI4QEBud3iWJdK2hFoRT1tjG75AYOk8O1rWHOtysyr7WV6Om7fym6oAe~1nT9Rf~u3iTG18b-hh3ukc7kxbjS8goxwtJiBp5uC~F1Q1iWRiZgcUTwXxwjSAmmI9eaRpdwxUkD45Dh25s1KW~ImqQ__',
-//     ftUsername: 'ForTehTech',
-//     ftName: 'GoddogIntern',
-//     displayPrice: '5062500000000000'
-//   }
-// ]
