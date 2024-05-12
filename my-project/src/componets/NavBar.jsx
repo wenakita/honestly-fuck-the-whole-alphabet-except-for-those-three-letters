@@ -13,7 +13,7 @@ function NavBar() {
   }, [authenticated, wallet]);
   return (
     <div
-      className={`w-[500px] border border-slate-500 p-2 text-[10px] ${authenticated && wallet ? "flex justify-between" : null}`}
+      className={`w-[450px] border border-slate-500 p-2 rounded-xl text-[10px] ${authenticated && wallet ? "flex justify-between" : null}`}
     >
       <img
         src="https://dd.dexscreener.com/ds-data/tokens/base/0xddf7d080c82b8048baae54e376a3406572429b4e.png?size=lg&key=18ea46"
@@ -23,14 +23,13 @@ function NavBar() {
       {authenticated && wallet ? (
         <>
           <h3 className="text-white text-center p-5 font-bold">FriendTool</h3>
-          <h3 className="text-white text-center p-5 font-bold">Uniswap</h3>
 
           <h3 className="text-white text-center p-5 font-bold">Deposit</h3>
 
           <h3 className="text-white text-center p-5 font-bold">Balance</h3>
 
           <button
-            className="text-white border p-3 h-[50px] me-10 rounded-xl border-slate-500"
+            className="text-white p-5 h-[52px]  mt-1 border border-slate-500 rounded-xl"
             onClick={logout}
           >
             Logout
