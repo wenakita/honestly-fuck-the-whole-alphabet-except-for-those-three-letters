@@ -5,20 +5,23 @@ import { uintFormat } from "../formatters/format";
 import FriendSwap from "./FriendSwap";
 function Friend() {
   const [data, setData] = useState(null);
-  const params = useParams();
+  const { address } = useParams();
+  console.log(address);
   useEffect(() => {
     fetchInfo();
-  }, []);
+  }, [address]);
   async function fetchInfo() {
-    const results = await SearchByContract(params.address);
-    console.log(results);
+    console.log(address);
+
+    const results = await SearchByContract(address);
+    console.log(results.ftName);
     setData(results);
   }
 
-  console.log(params.address);
+  console.log(address);
   return (
     <div className="container p-5">
-      <h3 className="text-white mb-5">{params.address}</h3>
+      <h3 className="text-white mb-5">{address}</h3>
 
       {data !== null ? (
         <div className="flex justify-center">
