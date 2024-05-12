@@ -88,6 +88,9 @@ function SearchBar() {
                   <Link
                     to={`/friend/${caResults?.address}`}
                     className="border border-slate-500 p-3 grid grid-cols-3"
+                    onClick={() => {
+                      setActivateResults(false);
+                    }}
                   >
                     <div>
                       <div className="flex justify-start gap-2">
@@ -129,6 +132,9 @@ function SearchBar() {
                         to={`friend/${item?.address}`}
                         className="border border-slate-500 p-3 grid grid-cols-3 text-white"
                         key={item}
+                        onClick={() => {
+                          setActivateResults(false);
+                        }}
                       >
                         <div>
                           <div className="flex justify-start gap-2">

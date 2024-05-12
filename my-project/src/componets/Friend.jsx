@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { SearchByContract } from "../requests/friendCalls";
+import { uintFormat } from "../formatters/format";
+import FriendSwap from "./FriendSwap";
 function Friend() {
   const [data, setData] = useState(null);
   const params = useParams();
@@ -29,6 +31,7 @@ function Friend() {
               />
             </div>
             <div className="text-white text-[20px] p-2">{data?.ftName}</div>
+
             <div className=" p-2">
               <a
                 href={`https://www.friend.tech/${data?.address}`}
@@ -43,6 +46,23 @@ function Friend() {
                   />
                 </div>
               </a>
+            </div>
+            <div className="p-2">
+              <div className="flex justify-start">
+                <h3 className="text-white text-[12px]">
+                  Followers: {data?.followerCount}
+                </h3>
+              </div>
+            </div>
+            <div className="p-2">
+              <div className="flex justify-start text-[12px]">
+                <h3 className="text-white">
+                  Price: {uintFormat(data?.displayPrice)}
+                </h3>
+              </div>
+            </div>
+            <div className="">
+              <FriendSwap />
             </div>
           </div>
         </div>
