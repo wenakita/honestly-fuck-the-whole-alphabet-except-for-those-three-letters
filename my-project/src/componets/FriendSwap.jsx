@@ -1,11 +1,14 @@
 import { usePrivy } from "@privy-io/react-auth";
 import { readContract } from "@wagmi/core";
+import { writeContract } from "@wagmi/core";
 import { useEffect, useState } from "react";
 import { getBalance } from "@wagmi/core";
 import friendTechABI from "../abi/FriendTechABi";
 import FriendABI from "../abi/FriendABI";
 import { config } from "../config";
 import { findId } from "../requests/friendCalls";
+import { uintFormat } from "../formatters/format";
+import { parseEther } from "viem";
 function FriendSwap(props) {
   const { shareAddress, price } = props;
   const { user } = usePrivy();
@@ -71,11 +74,63 @@ function FriendSwap(props) {
         message: null,
         variant: null,
       });
+
+      if (shouldWrap) {
+        wrapShares();
+      } else {
+        unwrapShares();
+      }
     }
   }
 
+  async function wrapShares() {
+    console.log("wrapping");
+    const finalAmountPlusFees = await readContract(config, {
+      address: "0xCF205808Ed36593aa40a44F10c7f7C2F67d4A4d4",
+      abi: FriendABI,
+      functionName: "getBuyPriceAfterFee",
+      args: [shareAddress, Number(input)],
+    });
+    const formattedFinalAmount = String(await uintFormat(finalAmountPlusFees));
+    console.log(formattedFinalAmount);
+    const wrapResults = writeContract(config, {
+      address: "0xbeea45F16D512a01f7E2a3785458D4a7089c8514",
+      abi: friendTechABI,
+      functionName: "wrap",
+      args: [shareAddress, Number(input), "0x"],
+      value: parseEther(formattedFinalAmount),
+      onSuccess(data) {
+        console.log(data);
+        setAlert({ message: "Wrap SuccessFul", variant: "green" });
+      },
+      onError(error) {
+        console.log(error);
+        setAlert({ message: "Wrap Not Successful", variant: "red" });
+      },
+    });
+    await wrapResults;
+  }
+  async function unwrapShares() {
+    console.log("unwrappping");
+    const unwrapResults = writeContract(config, {
+      address: "0xbeea45F16D512a01f7E2a3785458D4a7089c8514",
+      abi: friendTechABI,
+      functionName: "unwrap",
+      args: [shareAddress, Number(input)],
+      onSuccess(data) {
+        console.log(data);
+        setAlert({ message: "Unwrap SuccessFul", variant: "green" });
+      },
+      onError(error) {
+        console.log(error);
+        setAlert({ message: "Unwrap Not Successful", variant: "red" });
+      },
+    });
+    await unwrapResults;
+  }
+
   return (
-    <div className="border border-slate-500 p-3">
+    <div className="border border-slate-500 rounded-xl p-5 mt-2">
       {alerts.message !== null ? (
         <div className={`flex justify-center mt-4 text-${alerts.variant}-500`}>
           {alerts.message}
@@ -136,13 +191,13 @@ function FriendSwap(props) {
         />
         <div className="flex justify-end text-white text-[10px]">
           {shouldWrap ? (
-            <>{balance ? `Share Balance: ${balance}` : `Share Balance: 0`}</>
-          ) : (
             <>
               {ethBalance
                 ? `Eth Balance: ${ethBalance.toFixed(3)}`
                 : `Eth Balance: 0`}
             </>
+          ) : (
+            <>{balance ? `Share Balance: ${balance}` : `Share Balance: 0`}</>
           )}
         </div>
         <div className="flex justify-center mt-2">
