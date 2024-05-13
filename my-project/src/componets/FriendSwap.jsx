@@ -1,18 +1,53 @@
+import { usePrivy } from "@privy-io/react-auth";
+import { readContract } from "@wagmi/core";
 import { useEffect, useState } from "react";
-import { useWriteContract } from "wagmi";
+import { getBalance } from "@wagmi/core";
 import friendTechABI from "../abi/FriendTechABi";
-function FriendSwap() {
+import { config } from "../config";
+import { findId } from "../requests/friendCalls";
+function FriendSwap(props) {
+  const { shareAddress } = props;
+  console.log(shareAddress);
+  const { user } = usePrivy();
+  const wallet = user?.wallet;
+
   const [shouldWrap, setShouldWrap] = useState(true);
-  const { writeContract } = useWriteContract();
-  console.log(writeContract);
+  const [balance, setBalance] = useState(0);
+  const [ethBalance, setEthBalance] = useState(0);
 
   useEffect(() => {
-    getShareBalance();
-  }, []);
-  function buyShares() {}
-  function sellShares() {}
-  function getShareBalance() {}
-  function getPricePerShare() {}
+    getShareId();
+  });
+
+  async function getShareId() {
+    const ethBalance = await getBalance(config, {
+      address: wallet?.address,
+    });
+    setEthBalance(Number(ethBalance?.formatted));
+
+    const sharesFound = await findId(wallet?.address);
+    for (const key in sharesFound) {
+      const result = await readContract(config, {
+        address: "0xbeea45F16D512a01f7E2a3785458D4a7089c8514",
+        abi: friendTechABI,
+        functionName: "uri",
+        //userAddress and FriendTech token id
+        args: [sharesFound[key].identifier],
+      });
+      const currentCa = result.slice(28, result.length);
+      if (currentCa === shareAddress) {
+        const balanceResult = await readContract(config, {
+          address: "0xbeea45F16D512a01f7E2a3785458D4a7089c8514",
+          abi: friendTechABI,
+          functionName: "balanceOfBatch",
+          //userAddress and FriendTech token id
+          args: [[wallet?.address], [sharesFound[key].identifier]],
+        });
+        setBalance(Number(balanceResult));
+      }
+    }
+  }
+
   return (
     <div className="border border-slate-500 p-3">
       <h3 className="text-white p-2">Swap now</h3>
@@ -53,6 +88,17 @@ function FriendSwap() {
           className="bg-stone-800 p-1.5 rounded-lg"
           placeholder="received amount goes heres"
         />
+        <div className="flex justify-end text-white text-[10px]">
+          {shouldWrap ? (
+            <>{balance ? `Share Balance: ${balance}` : `Share Balance: 0`}</>
+          ) : (
+            <>
+              {ethBalance
+                ? `Eth Balance: ${ethBalance.toFixed(3)}`
+                : `Eth Balance: 0`}
+            </>
+          )}
+        </div>
         <div className="flex justify-center mt-2">
           {shouldWrap ? (
             <button className="border border-slate-500 bg-black text-white p-2 rounded-lg">

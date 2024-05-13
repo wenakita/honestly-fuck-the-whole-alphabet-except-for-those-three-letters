@@ -14,15 +14,13 @@ function Friend() {
     console.log(address);
 
     const results = await SearchByContract(address);
-    console.log(results.ftName);
+    console.log(results);
     setData(results);
   }
 
   console.log(address);
   return (
-    <div className="container p-5">
-      <h3 className="text-white mb-5">{address}</h3>
-
+    <div className="mt-10 container p-5">
       {data !== null ? (
         <div className="flex justify-center">
           <div className="border border-slate-500 rounded-xl w-[400px] p-5">
@@ -65,7 +63,7 @@ function Friend() {
               </div>
             </div>
             <div className="">
-              <FriendSwap />
+              <FriendSwap shareAddress={data?.address} />
             </div>
           </div>
         </div>

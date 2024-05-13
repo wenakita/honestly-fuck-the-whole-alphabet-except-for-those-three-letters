@@ -1,5 +1,6 @@
 import PropTypes from "prop-types";
 import { uintFormat } from "../formatters/format";
+import { Link } from "react-router-dom";
 function TrendingFriends(props) {
   const { data } = props;
   console.log(data);
@@ -18,7 +19,10 @@ function TrendingFriends(props) {
                   className="border border-slate-500 rounded-xl bg-black grid grid-cols-3 gap-2 p-5 text-white"
                 >
                   <div>
-                    <div className="flex justify-start gap-3">
+                    <Link
+                      to={`/friend/${item?.address}`}
+                      className="flex justify-start gap-3"
+                    >
                       <img
                         src={item?.ftPfpUrl}
                         alt=""
@@ -29,7 +33,7 @@ function TrendingFriends(props) {
                       >
                         {item?.ftName}
                       </h3>
-                    </div>
+                    </Link>
                   </div>
                   <div>
                     <div className="flex justify-center overflow-hidden text-[10px] me-8">

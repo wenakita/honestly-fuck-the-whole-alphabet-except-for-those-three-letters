@@ -1,6 +1,13 @@
 import { useState, useEffect } from "react";
 const jwt = import.meta.env.VITE_FRIEND_TECH_JWT;
 console.log(jwt);
+const options = {
+  method: "GET",
+  headers: {
+    accept: "application/json",
+    "x-api-key": "3652122689914635ac7806c7547255fe",
+  },
+};
 export function GetTrendingFriends() {
   const [trendingUsers, setTrendingUsers] = useState([]);
   useEffect(() => {
@@ -70,18 +77,42 @@ function formatUserName(target) {
   return target;
 }
 
-// export function searchFriends(axios) {
-//   const [friendResults, setFriendResluts] = useState([]);
-//   useEffect(() => {
-//     axios
-//       .get("https://prod-api.kosetto.com/lists/top-by-price")
-//       .then(function (results) {
-//         console.log(results.data);
-//       })
-//       .catch(function (error) {
-//         console.log(error);
-//       });
-//   }, []);
+export async function findId(userAddress) {
+  try {
+    const response = await fetch(
+      `https://api.opensea.io/api/v2/chain/base/account/${userAddress}/nfts`,
+      options
+    );
+    const data = await response.json();
+    const output = dissectShares(data.nfts);
+    return output;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
 
-//   return friendResults;
+function dissectShares(data) {
+  let foundShares = [];
+  console.log(data);
+  for (const key in data) {
+    if (
+      data[key].collection === "wrapped-friendtech" &&
+      data[key].token_standard === "erc1155"
+    ) {
+      foundShares.push(data[key]);
+    }
+  }
+  return foundShares;
+}
+
+// export async function GetTargetShareBalance(
+//   userAddress,
+//   targetAddress,
+//   shareId,
+//   useReadContract
+// ) {
+//   console.log(userAddress, targetAddress);
+
+//   return "1";
 // }
