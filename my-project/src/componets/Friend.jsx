@@ -63,7 +63,10 @@ function Friend() {
               </div>
             </div>
             <div className="">
-              <FriendSwap shareAddress={data?.address} />
+              <FriendSwap
+                shareAddress={data?.address}
+                price={uintFormat(data?.displayPrice)}
+              />
             </div>
           </div>
         </div>

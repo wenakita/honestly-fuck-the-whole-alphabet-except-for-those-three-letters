@@ -3,22 +3,34 @@ import { readContract } from "@wagmi/core";
 import { useEffect, useState } from "react";
 import { getBalance } from "@wagmi/core";
 import friendTechABI from "../abi/FriendTechABi";
+import FriendABI from "../abi/FriendABI";
 import { config } from "../config";
 import { findId } from "../requests/friendCalls";
 function FriendSwap(props) {
-  const { shareAddress } = props;
-  console.log(shareAddress);
+  const { shareAddress, price } = props;
   const { user } = usePrivy();
   const wallet = user?.wallet;
 
   const [shouldWrap, setShouldWrap] = useState(true);
   const [balance, setBalance] = useState(0);
   const [ethBalance, setEthBalance] = useState(0);
+  const [input, setInput] = useState("");
+  const [receivedValue, setReceivedValue] = useState("0");
+  const [alerts, setAlert] = useState({ message: null, variant: null });
 
   useEffect(() => {
     getShareId();
   });
 
+  useEffect(() => {
+    if (shouldWrap) {
+      const receive = price * Number(input);
+      setReceivedValue(receive);
+    } else {
+      const receive = price * Number(input);
+      setReceivedValue(receive);
+    }
+  }, [input]);
   async function getShareId() {
     const ethBalance = await getBalance(config, {
       address: wallet?.address,
@@ -48,14 +60,41 @@ function FriendSwap(props) {
     }
   }
 
+  async function commenceTransaction() {
+    if (isNaN(Number(input))) {
+      setAlert({
+        message: "Input must be in numeric form",
+        variant: "red",
+      });
+    } else {
+      setAlert({
+        message: null,
+        variant: null,
+      });
+    }
+  }
+
   return (
     <div className="border border-slate-500 p-3">
+      {alerts.message !== null ? (
+        <div className={`flex justify-center mt-4 text-${alerts.variant}-500`}>
+          {alerts.message}
+        </div>
+      ) : null}
       <h3 className="text-white p-2">Swap now</h3>
-      <div className="grid grid-flow-row gap-2 mb-5">
+      <div className="grid grid-flow-row gap-2 mb-5 mt-3">
+        {shouldWrap ? (
+          <h3 className="text-[12px] text-white ms-2">Buy</h3>
+        ) : (
+          <h3 className="text-[12px] text-white ms-2">Sell</h3>
+        )}
         <input
           type="text"
-          className="bg-stone-800 p-1.5 rounded-lg"
+          className="bg-stone-800 p-1.5 rounded-lg text-white"
           placeholder="swap target goes here"
+          onChange={(e) => {
+            setInput(e.target.value);
+          }}
         />
         <div className="flex justify-center">
           <button
@@ -83,10 +122,17 @@ function FriendSwap(props) {
             </svg>
           </button>
         </div>
+        {shouldWrap ? (
+          <h3 className="text-[12px] text-white ms-2">ETH Value</h3>
+        ) : (
+          <h3 className="text-[12px] text-white ms-2">ETH Received</h3>
+        )}
         <input
           type="text"
-          className="bg-stone-800 p-1.5 rounded-lg"
+          className="bg-stone-800 p-1.5 rounded-lg text-white"
           placeholder="received amount goes heres"
+          disabled={true}
+          value={receivedValue}
         />
         <div className="flex justify-end text-white text-[10px]">
           {shouldWrap ? (
@@ -101,11 +147,21 @@ function FriendSwap(props) {
         </div>
         <div className="flex justify-center mt-2">
           {shouldWrap ? (
-            <button className="border border-slate-500 bg-black text-white p-2 rounded-lg">
+            <button
+              className="border border-slate-500 bg-black text-white p-2 rounded-lg"
+              onClick={() => {
+                commenceTransaction();
+              }}
+            >
               Mint
             </button>
           ) : (
-            <button className="border border-slate-500 bg-black text-white p-2 rounded-lg">
+            <button
+              className="border border-slate-500 bg-black text-white p-2 rounded-lg"
+              onClick={() => {
+                commenceTransaction();
+              }}
+            >
               Burn
             </button>
           )}
