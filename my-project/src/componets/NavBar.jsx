@@ -18,7 +18,7 @@ function NavBar() {
       <img
         src="https://dd.dexscreener.com/ds-data/tokens/base/0xddf7d080c82b8048baae54e376a3406572429b4e.png?size=lg&key=18ea46"
         alt=""
-        className="w-16 h-16"
+        className="w-10 h-10 mt-2"
       />
       {authenticated && wallet ? (
         <>
