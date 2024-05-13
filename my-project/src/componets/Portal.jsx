@@ -3,7 +3,8 @@ import { usePrivy } from "@privy-io/react-auth";
 import { useNavigate } from "react-router-dom";
 function Portal() {
   const navigate = useNavigate();
-  const { login, logout, ready, authenticated, user } = usePrivy();
+  const { login, logout, ready, authenticated, user, connectWallet } =
+    usePrivy();
   const wallet = user?.wallet;
   const address = wallet?.address;
   useEffect(() => {
