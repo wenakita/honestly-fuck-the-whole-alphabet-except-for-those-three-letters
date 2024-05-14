@@ -15,7 +15,7 @@ function Layout() {
           <SearchBar />
         </div>
       ) : null}
-      <div>
+      <div className="mb-20">
         <Outlet />
       </div>
     </div>
