@@ -3,14 +3,35 @@ import { useWallets } from "@privy-io/react-auth";
 import { usePrivy } from "@privy-io/react-auth";
 import { useEffect, useState } from "react";
 import FriendTechABI from "../abi/FriendTechABi";
+import FriendABI from "../abi/FriendABI";
+import { findId } from "../requests/friendCalls";
+import { readContract } from "@wagmi/core";
+import { useBalance } from "wagmi";
+import { config } from "../config";
+import { parseEther } from "viem";
 function FriendSwap(props) {
+  const [input, setInput] = useState("");
+  const [recieve, seteRecieve] = useState("0");
+  const [alert, setAlert] = useState({ message: null, variant: null });
+  const [finalPayAmount, setFinalPayAmount] = useState("");
   const [shouldWrap, setShouldWrap] = useState(true);
-  const { shareAddress } = props;
+  const { shareAddress, price } = props;
+  console.log(shareAddress);
 
   const { ready, user, login, logout, authenticated } = usePrivy();
   const { wallets } = useWallets();
   const w0 = wallets[0];
+  const userEthBalance = useBalance({
+    address: w0?.address,
+  });
 
+  useEffect(() => {
+    if (shouldWrap) {
+      seteRecieve(Number(price) * Number(input));
+    } else {
+      seteRecieve(Number(price) * Number(input));
+    }
+  }, [input]);
   useEffect(() => {
     w0?.getEthersProvider().then(async (provider) => {
       const network = await provider.getNetwork();
@@ -18,6 +39,16 @@ function FriendSwap(props) {
       await w0.switchChain(8453);
     });
   }, [w0]);
+  useEffect(() => {
+    getHoldings();
+  }, [w0]);
+
+  async function getHoldings() {
+    console.log(user?.wallet?.address);
+    const holdings = await findId(user?.wallet?.address);
+    console.log(await holdings);
+  }
+
   const walletAddress = user?.wallet?.address;
 
   async function addNetwork() {
@@ -54,14 +85,95 @@ function FriendSwap(props) {
       signer
     );
     const res = await shareWrapperContract.unwrap(
-      "0x19d509ab2f0c352a31f638b22d406e07f77fd22c",
+      "0xa053f456c2ed11965f57f4940e9443e0d50203e3",
       1
     );
+
     const receipt = await res.wait();
     console.log(receipt.events);
   };
+
+  async function commenceTx() {
+    if (shouldWrap) {
+      await wrapToken();
+    } else {
+      await unwrapToken();
+    }
+  }
+
+  async function calculateTotalWithGas() {
+    try {
+      console.log("here");
+      const result = await readContract(config, {
+        abi: FriendABI,
+        address: "0xCF205808Ed36593aa40a44F10c7f7C2F67d4A4d4",
+        functionName: "getBuyPriceAfterFee",
+        args: [shareAddress, Number(input)],
+      });
+      const tempTotal = await String(Number(result) / 10 ** 18);
+      console.log(tempTotal);
+      return tempTotal;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async function wrapToken() {
+    const provider = await w0?.getEthersProvider();
+    const network = await provider.getNetwork();
+    const signer = await provider?.getSigner();
+    const address = await signer?.getAddress();
+    const finalAmount = await calculateTotalWithGas();
+    console.log(finalAmount);
+    if (network?.chainId !== 8453) {
+      await addNetwork();
+    }
+    const shareWrapperContract = new Contract(
+      "0xbeea45F16D512a01f7E2a3785458D4a7089c8514",
+      FriendTechABI,
+      signer
+    );
+    const res = await shareWrapperContract.wrap(
+      shareAddress,
+      Number(input),
+      "0x",
+      {
+        value: parseEther(finalAmount),
+      }
+    );
+
+    const receipt = await res.wait();
+    console.log(await receipt.events);
+  }
+  async function unwrapToken() {
+    const provider = await w0?.getEthersProvider();
+    const network = await provider.getNetwork();
+    const signer = await provider?.getSigner();
+    const address = await signer?.getAddress();
+    const finalAmount = await calculateTotalWithGas();
+    console.log(finalAmount);
+    if (network?.chainId !== 8453) {
+      await addNetwork();
+    }
+    const shareWrapperContract = new Contract(
+      "0xbeea45F16D512a01f7E2a3785458D4a7089c8514",
+      FriendTechABI,
+      signer
+    );
+    const res = await shareWrapperContract.unwrap(shareAddress, Number(input));
+    const receipt = await res.wait();
+    console.log(await receipt.events);
+  }
+
   return (
     <div className="border p-3">
+      {alert.message !== null ? (
+        <div className="mb-2 mt-3">
+          <h3 className={`text-${alert.variant}-500 text-center`}>
+            {alert.message}
+          </h3>
+        </div>
+      ) : null}
       <h3 className="text-white">
         {shouldWrap ? "Mint Shares" : "Burn Shares"}
       </h3>
@@ -72,7 +184,13 @@ function FriendSwap(props) {
         Test TX
       </button>
       <div className="grid grid-flow-row gap-2">
-        <input type="text" className="w-[330px] bg-stone-500 rounded-lg" />
+        <input
+          type="text"
+          className="w-[330px] bg-stone-800 text-white rounded-lg"
+          onChange={(e) => {
+            setInput(e.target.value);
+          }}
+        />
         <div className="flex justify-center">
           <button
             onClick={() => {
@@ -99,11 +217,38 @@ function FriendSwap(props) {
             </svg>
           </button>
         </div>
-        <input type="text" className="w-[330px] bg-stone-500 rounded-lg" />
+        <input
+          type="text"
+          className="w-[330px] bg-stone-800 text-white rounded-lg"
+          value={recieve}
+        />
         <div className="flex justify-end">
           <h3 className="text-white text-[10px]">
-            {shouldWrap ? `ETH balance` : `Share Balance`}
+            {shouldWrap
+              ? `ETH balance: ${userEthBalance?.data?.formatted}`
+              : `Share Balance ${0}`}
           </h3>
+        </div>
+        <div className="mt-3 flex justify-center">
+          <button
+            className="border border-slate-500 bg-black rounded-xl text-white p-3"
+            onClick={() => {
+              commenceTx();
+            }}
+          >
+            <div className="flex justify-center gap-2">
+              <h3>{shouldWrap ? "Mint" : "Burn"}</h3>
+              <img
+                src={
+                  shouldWrap
+                    ? "https://i.pinimg.com/originals/49/02/54/4902548424a02117b7913c17d2e379ff.gif"
+                    : "https://media3.giphy.com/media/J2awouDsf23R2vo2p5/giphy.gif?cid=6c09b95271qkr9h7zeqhzcchzf0g93pzapi9qzlx1f8ha35c&ep=v1_internal_gif_by_id&rid=giphy.gif&ct=e"
+                }
+                alt=""
+                className="w-5 h-6"
+              />
+            </div>
+          </button>
         </div>
       </div>
     </div>
