@@ -1,7 +1,9 @@
 import propTypes from "prop-types";
 import { GetTrendingFriends } from "../requests/friendCalls";
+import { usePrivy } from "@privy-io/react-auth";
 import TrendingFriends from "./TrendingFriends";
 function Home() {
+  const { user } = usePrivy();
   const trendingFriends = GetTrendingFriends();
   console.log(trendingFriends);
 
@@ -28,6 +30,11 @@ function Home() {
             />
           </div>
         </div> */}
+      </div>
+      <div className="mt-10">
+        <h3 className="text-white flex justify-center">
+          Your unique deposit address: {user?.wallet?.address}
+        </h3>
       </div>
       <div className=" mt-10">
         <TrendingFriends data={trendingFriends} />
