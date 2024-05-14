@@ -8,11 +8,13 @@ function Home() {
   return (
     <div className="">
       <div className="text-[30px] text-center p-5  flex justify-center">
-        <img
-          src="../../public/photo_5051187200489794811_y.jpg"
-          alt=""
-          className="w-full h-[500px]"
-        />
+        <a href="https://ibb.co/zS2v8Q5">
+          <img
+            src="https://i.ibb.co/ZhgDHGJ/photo-5051187200489794811-y.jpg"
+            alt="photo-5051187200489794811-y"
+            border="0"
+          />
+        </a>
         {/* <div className="text-center">
           <h3 className="text-white text-[20px] font-mono">
             Say goodbye to external web3 apps. Seamlessley mint & burn
