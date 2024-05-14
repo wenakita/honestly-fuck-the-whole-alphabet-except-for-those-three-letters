@@ -15,9 +15,12 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <PrivyProvider
           appId={import.meta.env.VITE_NEXT_PUBLIC_PRIVY_APP_ID}
           config={{
-            loginMethods: ["wallet"],
+            loginMethods: ["email", "wallet", "google", "apple", "farcaster"],
             appearance: {
               theme: "dark",
+            },
+            embeddedWallets: {
+              createOnLogin: "users-without-wallets",
             },
           }}
         >

@@ -19,11 +19,33 @@ function FriendSwap(props) {
   }, [w0]);
   const walletAddress = user?.wallet?.address;
 
+  async function addNetwork() {
+    console.info("Adding network");
+    const provider = await w0?.getEthersProvider();
+    //Request to add Inco chain
+    await provider?.send("wallet_addEthereumChain", [
+      {
+        chainId: "0x2105", //9090
+        chainName: "Base",
+        nativeCurrency: {
+          name: "Ethereum",
+          symbol: "ETH",
+          decimals: 18,
+        },
+        rpcUrls: ["https://base.llamarpc.com"],
+        blockExplorerUrls: ["https://basescan.org/"],
+      },
+    ]);
+  }
+
   const testTransaction = async () => {
     const provider = await w0?.getEthersProvider();
     const network = await provider.getNetwork();
     const signer = await provider?.getSigner();
     const address = await signer?.getAddress();
+    if (network?.chainId !== 8453) {
+      await addNetwork();
+    }
 
     const shareWrapperContract = new Contract(
       "0xbeea45F16D512a01f7E2a3785458D4a7089c8514",
