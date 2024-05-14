@@ -18,6 +18,7 @@ function Layout() {
       <div className="mb-20">
         <Outlet />
       </div>
+      <footer></footer>
     </div>
   );
 }
