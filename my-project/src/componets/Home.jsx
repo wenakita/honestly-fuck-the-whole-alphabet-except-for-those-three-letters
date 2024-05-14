@@ -7,8 +7,13 @@ function Home() {
 
   return (
     <div className="">
-      <div className="text-[30px] text-center p-5 ">
-        <div className="text-center">
+      <div className="text-[30px] text-center p-5  flex justify-center">
+        <img
+          src="../../public/photo_5051187200489794811_y.jpg"
+          alt=""
+          className="w-full h-[500px]"
+        />
+        {/* <div className="text-center">
           <h3 className="text-white text-[20px] font-mono">
             Say goodbye to external web3 apps. Seamlessley mint & burn
             friend.tech shares while chatting with thousands on Telegram
@@ -20,7 +25,7 @@ function Home() {
               className="w-20 h-20 rounded-full"
             />
           </div>
-        </div>
+        </div> */}
       </div>
       <div className=" mt-10">
         <TrendingFriends data={trendingFriends} />

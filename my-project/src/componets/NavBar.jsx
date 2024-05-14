@@ -1,6 +1,6 @@
 import { usePrivy } from "@privy-io/react-auth";
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 function NavBar() {
   const navigate = useNavigate();
   const { logout, authenticated, user } = usePrivy();
@@ -22,7 +22,9 @@ function NavBar() {
       />
       {authenticated && wallet ? (
         <>
-          <h3 className="text-white text-center p-5 font-bold">FriendTool</h3>
+          <Link to="/home" className="text-white text-center p-5 font-bold">
+            FriendTool
+          </Link>
 
           <h3 className="text-white text-center p-5 font-bold">Deposit</h3>
 

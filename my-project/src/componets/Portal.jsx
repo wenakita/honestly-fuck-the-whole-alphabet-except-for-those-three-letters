@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { usePrivy } from "@privy-io/react-auth";
 import { useNavigate } from "react-router-dom";
+import { useBalance } from "wagmi";
 function Portal() {
   const navigate = useNavigate();
   const {
@@ -14,11 +15,19 @@ function Portal() {
   } = usePrivy();
   const wallet = user?.wallet;
   const address = wallet?.address;
+  const userEthBalance = useBalance({
+    address: wallet?.address,
+  });
   useEffect(() => {
     if (authenticated) {
+      console.log(address);
+      console.log(userEthBalance?.data?.formatted);
+      // const formattedBalance = Number(userEthBalance?.data?.formatted);
+      // console.log(formattedBalance);
+      // if ()
       navigate("/home");
     }
-  }, [authenticated, wallet]);
+  });
   return (
     <div className="mt-20">
       <div className="flex justify-center">
