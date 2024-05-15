@@ -113,7 +113,7 @@ function Balances() {
               return (
                 <div
                   key={index}
-                  className="text-white border border-slate-500 rounded-xl grid grid-cols-4 p-2 mt-3 w-[600px]  mt-3"
+                  className="text-white border border-slate-500 rounded-xl grid grid-cols-4 p-2 mt-3 w-[550px]"
                 >
                   <div className="flex justify-start gap-2">
                     <img
@@ -139,7 +139,7 @@ function Balances() {
                         alt=""
                         className="w-7 h-6"
                       />
-                      <span className="text-[12px] mt-1">Mint & Burn</span>
+                      <span className="text-[10px] mt-1">Mint & Burn</span>
                       <img
                         src="https://media0.giphy.com/media/J2awouDsf23R2vo2p5/giphy.gif?cid=6c09b9528hc0btlg9yo7v4fnfa4c0amgumd8n075941rgt12&ep=v1_internal_gif_by_id&rid=giphy.gif&ct=e"
                         alt=""
