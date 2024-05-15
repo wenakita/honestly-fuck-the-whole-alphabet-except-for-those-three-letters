@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 function NavBar() {
   const navigate = useNavigate();
-  const { logout, authenticated, user } = usePrivy();
+  const { logout, authenticated, user, ready } = usePrivy();
   const wallet = user?.wallet;
   const address = wallet?.address;
   useEffect(() => {
@@ -20,7 +20,7 @@ function NavBar() {
         alt=""
         className="w-10 h-10 mt-2"
       />
-      {authenticated && wallet ? (
+      {authenticated && ready ? (
         <>
           <Link to="/home" className="text-white text-center p-5 font-bold">
             FriendTool
