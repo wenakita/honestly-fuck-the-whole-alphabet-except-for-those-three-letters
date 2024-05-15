@@ -91,7 +91,7 @@ function Balances() {
     }
   }
   return (
-    <div className="container">
+    <div className="">
       <div className="text-[30px] text-center p-5  flex justify-center">
         <img
           src="https://i.ibb.co/ZhgDHGJ/photo-5051187200489794811-y.jpg"
