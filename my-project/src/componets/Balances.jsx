@@ -91,7 +91,7 @@ function Balances() {
     }
   }
   return (
-    <div className="">
+    <div className="overflow-auto">
       <div className="text-[30px] text-center p-5  flex justify-center">
         <img
           src="https://i.ibb.co/ZhgDHGJ/photo-5051187200489794811-y.jpg"
@@ -113,7 +113,7 @@ function Balances() {
               return (
                 <div
                   key={index}
-                  className="text-white border border-slate-500 rounded-xl grid grid-cols-4 p-2 mt-3 w-[550px]"
+                  className="text-white border border-slate-500 rounded-xl grid grid-cols-4 p-3 mt-3 w-[450px]"
                 >
                   <div className="flex justify-start gap-2">
                     <img
