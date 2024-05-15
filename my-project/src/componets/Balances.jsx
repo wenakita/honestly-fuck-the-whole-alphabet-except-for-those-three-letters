@@ -108,12 +108,12 @@ function Balances() {
         <h3 className="text-white text-center">Your balances: </h3>
 
         {holdingsDataFound.length > 0 ? (
-          <>
+          <center>
             {holdingsDataFound.map((item, index) => {
               return (
                 <div
                   key={index}
-                  className="text-white border border-slate-500 rounded-xl grid grid-cols-4 p-2 mt-3 w-[600px] ms-32 mt-3"
+                  className="text-white border border-slate-500 rounded-xl grid grid-cols-4 p-2 mt-3 w-[600px]  mt-3"
                 >
                   <div className="flex justify-start gap-2">
                     <img
@@ -150,7 +150,7 @@ function Balances() {
                 </div>
               );
             })}
-          </>
+          </center>
         ) : null}
       </div>
     </div>
