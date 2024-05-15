@@ -2,7 +2,10 @@ import { Outlet } from "react-router-dom";
 import NavBar from "./NavBar";
 import SearchBar from "./SearchBar";
 import { usePrivy } from "@privy-io/react-auth";
+import { useParams } from "react-router-dom";
 function Layout() {
+  const params = useParams();
+  console.log(params.address);
   const { authenticated, user } = usePrivy();
   const wallet = user?.wallet;
   return (
@@ -18,7 +21,6 @@ function Layout() {
       <div className="mb-20">
         <Outlet />
       </div>
-      <footer></footer>
     </div>
   );
 }

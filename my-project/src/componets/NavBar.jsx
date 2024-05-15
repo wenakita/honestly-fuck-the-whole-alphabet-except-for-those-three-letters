@@ -28,7 +28,12 @@ function NavBar() {
 
           <h3 className="text-white text-center p-5 font-bold">Deposit</h3>
 
-          <h3 className="text-white text-center p-5 font-bold">Balance</h3>
+          <Link
+            to={"/balances"}
+            className="text-white text-center p-5 font-bold"
+          >
+            Balance
+          </Link>
 
           <button
             className="text-white p-5 h-[52px]  mt-1 border border-slate-500 rounded-xl"

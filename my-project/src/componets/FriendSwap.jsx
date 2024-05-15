@@ -15,8 +15,8 @@ function FriendSwap(props) {
   const [alert, setAlert] = useState({ message: null, variant: null });
   const [finalPayAmount, setFinalPayAmount] = useState("");
   const [shouldWrap, setShouldWrap] = useState(true);
+  const [balance, setBalance] = useState(0);
   const { shareAddress, price } = props;
-  console.log(shareAddress);
 
   const { ready, user, login, logout, authenticated } = usePrivy();
   const { wallets } = useWallets();
@@ -35,18 +35,59 @@ function FriendSwap(props) {
   useEffect(() => {
     w0?.getEthersProvider().then(async (provider) => {
       const network = await provider.getNetwork();
-      console.log(network.chainId);
       await w0.switchChain(8453);
     });
   }, [w0]);
   useEffect(() => {
     getHoldings();
+  });
+
+  useEffect(() => {
+    getHoldings();
   }, [w0]);
 
+  useEffect(() => {
+    setAlert({ message: null, variant: null });
+  }, []);
+
   async function getHoldings() {
-    console.log(user?.wallet?.address);
     const holdings = await findId(user?.wallet?.address);
-    console.log(await holdings);
+    for (const key in holdings) {
+      const currentAddress = await getUri(holdings[key].identifier);
+      if (currentAddress === shareAddress) {
+        getShareBalance(holdings[key].identifier);
+      }
+    }
+  }
+
+  async function getShareBalance(id) {
+    try {
+      const balanceResult = await readContract(config, {
+        abi: FriendTechABI,
+        address: "0xbeea45F16D512a01f7E2a3785458D4a7089c8514",
+        functionName: "balanceOf",
+        args: [w0?.address, id],
+      });
+      setBalance(Number(balanceResult));
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async function getUri(id) {
+    try {
+      const uriResult = await readContract(config, {
+        abi: FriendTechABI,
+        address: "0xbeea45F16D512a01f7E2a3785458D4a7089c8514",
+        functionName: "uri",
+        args: [id],
+      });
+      const contractResult = uriResult.slice(28, uriResult.length);
+      return contractResult;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
   }
 
   const walletAddress = user?.wallet?.address;
@@ -70,29 +111,6 @@ function FriendSwap(props) {
     ]);
   }
 
-  const testTransaction = async () => {
-    const provider = await w0?.getEthersProvider();
-    const network = await provider.getNetwork();
-    const signer = await provider?.getSigner();
-    const address = await signer?.getAddress();
-    if (network?.chainId !== 8453) {
-      await addNetwork();
-    }
-
-    const shareWrapperContract = new Contract(
-      "0xbeea45F16D512a01f7E2a3785458D4a7089c8514",
-      FriendTechABI,
-      signer
-    );
-    const res = await shareWrapperContract.unwrap(
-      "0xa053f456c2ed11965f57f4940e9443e0d50203e3",
-      1
-    );
-
-    const receipt = await res.wait();
-    console.log(receipt.events);
-  };
-
   async function commenceTx() {
     if (shouldWrap) {
       await wrapToken();
@@ -103,7 +121,6 @@ function FriendSwap(props) {
 
   async function calculateTotalWithGas() {
     try {
-      console.log("here");
       const result = await readContract(config, {
         abi: FriendABI,
         address: "0xCF205808Ed36593aa40a44F10c7f7C2F67d4A4d4",
@@ -111,7 +128,6 @@ function FriendSwap(props) {
         args: [shareAddress, Number(input)],
       });
       const tempTotal = await String(Number(result) / 10 ** 18);
-      console.log(tempTotal);
       return tempTotal;
     } catch (error) {
       console.log(error);
@@ -124,7 +140,7 @@ function FriendSwap(props) {
     const signer = await provider?.getSigner();
     const address = await signer?.getAddress();
     const finalAmount = await calculateTotalWithGas();
-    console.log(finalAmount);
+
     if (network?.chainId !== 8453) {
       await addNetwork();
     }
@@ -133,17 +149,25 @@ function FriendSwap(props) {
       FriendTechABI,
       signer
     );
-    const res = await shareWrapperContract.wrap(
-      shareAddress,
-      Number(input),
-      "0x",
-      {
-        value: parseEther(finalAmount),
-      }
-    );
+    try {
+      const res = await shareWrapperContract.wrap(
+        shareAddress,
+        Number(input),
+        "0x",
+        {
+          value: parseEther(finalAmount),
+        }
+      );
 
-    const receipt = await res.wait();
-    console.log(await receipt.events);
+      const receipt = await res.wait();
+      console.log(await receipt.events);
+      setAlert({
+        message: `Transaction complete!`,
+        variant: "green",
+      });
+    } catch (error) {
+      setAlert({ message: "Insufficient Balance", variant: "green" });
+    }
   }
   async function unwrapToken() {
     const provider = await w0?.getEthersProvider();
@@ -151,7 +175,6 @@ function FriendSwap(props) {
     const signer = await provider?.getSigner();
     const address = await signer?.getAddress();
     const finalAmount = await calculateTotalWithGas();
-    console.log(finalAmount);
     if (network?.chainId !== 8453) {
       await addNetwork();
     }
@@ -160,30 +183,38 @@ function FriendSwap(props) {
       FriendTechABI,
       signer
     );
-    const res = await shareWrapperContract.unwrap(shareAddress, Number(input));
-    const receipt = await res.wait();
-    console.log(await receipt.events);
+    try {
+      const res = await shareWrapperContract.unwrap(
+        shareAddress,
+        Number(input)
+      );
+      const receipt = await res.wait();
+      console.log(await receipt.events);
+      setAlert({
+        message: `Transaction complete!`,
+        variant: "green",
+      });
+    } catch (error) {
+      console.log(error);
+      setAlert({ message: "Insufficient Balance", variant: "green" });
+    }
   }
 
   return (
-    <div className="border p-3">
+    <div className="border border-slate-500 rounded-xl p-3">
       {alert.message !== null ? (
         <div className="mb-2 mt-3">
-          <h3 className={`text-${alert.variant}-500 text-center`}>
+          <h3 className={`text-white text-center text-[10px]`}>
             {alert.message}
           </h3>
         </div>
       ) : null}
-      <h3 className="text-white">
+      <h3 className="text-white underline">
         {shouldWrap ? "Mint Shares" : "Burn Shares"}
       </h3>
-      <button
-        className="border border-slate-500 bg-green-500 text-white"
-        onClick={testTransaction}
-      >
-        Test TX
-      </button>
-      <div className="grid grid-flow-row gap-2">
+
+      <div className="grid grid-flow-row gap-2 mt-3">
+        <h3 className="text-white">{shouldWrap ? "Mint" : "Burn"}</h3>
         <input
           type="text"
           className="w-[330px] bg-stone-800 text-white rounded-lg"
@@ -217,6 +248,10 @@ function FriendSwap(props) {
             </svg>
           </button>
         </div>
+        <h3 className="text-white">
+          {shouldWrap ? "Share Value" : "ETH Recieved"}
+        </h3>
+
         <input
           type="text"
           className="w-[330px] bg-stone-800 text-white rounded-lg"
@@ -226,7 +261,7 @@ function FriendSwap(props) {
           <h3 className="text-white text-[10px]">
             {shouldWrap
               ? `ETH balance: ${userEthBalance?.data?.formatted}`
-              : `Share Balance ${0}`}
+              : `Share Balance ${balance}`}
           </h3>
         </div>
         <div className="mt-3 flex justify-center">
