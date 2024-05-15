@@ -20,7 +20,7 @@ function NavBar() {
         alt=""
         className="w-10 h-10 mt-2"
       />
-      {authenticated ? (
+      {authenticated && wallet ? (
         <>
           <Link to="/home" className="text-white text-center p-5 font-bold">
             FriendTool
