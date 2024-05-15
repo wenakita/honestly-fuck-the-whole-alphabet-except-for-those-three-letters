@@ -104,11 +104,11 @@ function Balances() {
           Your unique deposit address: {w0?.address}
         </h3>
       </div>
-      <div className="p-20 mt-2 grid-flow-row">
-        <h3 className="text-white text-center">Your balances: </h3>
+      <h3 className="text-white text-center mt-10">Your balances: </h3>
 
+      <div className=" mt-2 flex justify-center">
         {holdingsDataFound.length > 0 ? (
-          <center>
+          <div className="">
             {holdingsDataFound.map((item, index) => {
               return (
                 <div
@@ -150,7 +150,7 @@ function Balances() {
                 </div>
               );
             })}
-          </center>
+          </div>
         ) : null}
       </div>
     </div>
