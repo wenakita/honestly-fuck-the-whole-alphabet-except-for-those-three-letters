@@ -6,10 +6,19 @@ import { config } from "../config";
 import FriendTechABi from "../abi/FriendTechABi";
 import { uintFormat } from "../formatters/format";
 import { Link } from "react-router-dom";
+import {
+  Description,
+  Dialog,
+  DialogPanel,
+  DialogTitle,
+  Transition,
+} from "@headlessui/react";
 
 function Balances() {
   const [userHoldings, setUserHoldings] = useState([]);
   const [holdingsDataFound, setHoldingsDataFound] = useState([]);
+  const [isOpen, setIsOpen] = useState(false);
+  const [isShowing, setIsShowing] = useState(false);
   const { wallets } = useWallets();
   const w0 = wallets[0];
   const userAddress = w0?.address;
@@ -113,7 +122,7 @@ function Balances() {
               return (
                 <div
                   key={index}
-                  className="text-white border border-slate-500 rounded-xl grid grid-cols-4 p-3 mt-3 w-[450px]"
+                  className="text-white border border-slate-500 rounded-xl grid grid-cols-4 p-3 mt-3 w-[800px]"
                 >
                   <div className="flex justify-start gap-2">
                     <img

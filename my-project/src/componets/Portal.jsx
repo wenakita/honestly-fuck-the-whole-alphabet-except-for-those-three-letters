@@ -31,16 +31,13 @@ function Portal() {
   return (
     <div className="mt-20">
       <div className="flex justify-center">
-        <h3 className="text-white text-[20px]">welcome to the goddog portal</h3>
-      </div>
-      <div className="flex justify-center gap-2 mt-3">
-        <h3 className="text-white text-[20px]">powered by</h3>
         <img
-          src="https://auth.privy.io/logos/privy-logo.png"
+          src="https://ivory-accurate-pig-375.mypinata.cloud/ipfs/QmNfe9547vPVgd8qqdCFeH81yHos1n1CoQZu1D9n5Nrjvp?pinataGatewayToken=DdSIfjJJunjBBaGpRA4VE7rw9Q3bNil3avaM8VrHQkPRh_2vaSMuwGFYGbn9Xzt2"
           alt=""
-          className="w-20 h-8"
+          style={{ maxWidth: "80%" }}
         />
       </div>
+
       <div className="flex justify-center mt-10">
         {authenticated && ready ? (
           <button

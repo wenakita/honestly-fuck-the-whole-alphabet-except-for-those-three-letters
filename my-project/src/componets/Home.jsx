@@ -11,7 +11,7 @@ function Home() {
     <div className="">
       <div className="text-[30px] text-center p-5  flex justify-center">
         <img
-          src="https://i.ibb.co/ZhgDHGJ/photo-5051187200489794811-y.jpg"
+          src="https://i.postimg.cc/1tVjvkNm/IMAGE-2024-05-16-01-17-14.jpg"
           alt="photo-5051187200489794811-y"
           border="0"
         />

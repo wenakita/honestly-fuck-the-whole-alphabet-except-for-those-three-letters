@@ -13,7 +13,7 @@ function NavBar() {
   }, [authenticated, wallet]);
   return (
     <div
-      className={`w-[450px] border border-slate-500 p-2 rounded-xl text-[10px] ${authenticated && wallet ? "flex justify-between" : null}`}
+      className={`w-[450px] border border-slate-500 p-2 rounded-xl text-[8px] ${authenticated && wallet ? "flex justify-between" : null}`}
     >
       <img
         src="https://dd.dexscreener.com/ds-data/tokens/base/0xddf7d080c82b8048baae54e376a3406572429b4e.png?size=lg&key=18ea46"
@@ -26,6 +26,9 @@ function NavBar() {
             FriendTool
           </Link>
 
+          <Link to={"/swap"} className="text-white text-center p-5 font-bold">
+            Swap
+          </Link>
           <h3 className="text-white text-center p-5 font-bold">Deposit</h3>
 
           <Link

@@ -6,12 +6,12 @@ import { useParams } from "react-router-dom";
 function Layout() {
   const params = useParams();
   console.log(params.address);
-  const { authenticated, user } = usePrivy();
+  const { authenticated, user, ready } = usePrivy();
   const wallet = user?.wallet;
   return (
     <div className="container">
       <div className="flex justify-center">
-        <NavBar />
+        {authenticated && ready ? <NavBar /> : null}
       </div>
       {authenticated && wallet ? (
         <div className="flex justify-center p-3">
