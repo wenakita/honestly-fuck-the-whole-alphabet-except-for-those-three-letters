@@ -26,9 +26,7 @@ function NavBar() {
             FriendTool
           </Link>
 
-          <Link to={"/swap"} className="text-white text-center p-5 font-bold">
-            Swap
-          </Link>
+          <h3 className="text-white text-center p-5 font-bold">Swap</h3>
           <h3 className="text-white text-center p-5 font-bold">Deposit</h3>
 
           <Link
