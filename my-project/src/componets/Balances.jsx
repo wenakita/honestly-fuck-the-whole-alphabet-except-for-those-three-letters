@@ -6,13 +6,6 @@ import { config } from "../config";
 import FriendTechABi from "../abi/FriendTechABi";
 import { uintFormat } from "../formatters/format";
 import { Link } from "react-router-dom";
-import {
-  Description,
-  Dialog,
-  DialogPanel,
-  DialogTitle,
-  Transition,
-} from "@headlessui/react";
 
 function Balances() {
   const [userHoldings, setUserHoldings] = useState([]);
@@ -109,7 +102,7 @@ function Balances() {
         />
       </div>
       <div className="mt-10">
-        <h3 className="text-white flex justify-center font-mono font-bold">
+        <h3 className="text-white flex justify-center font-mono font-bold text-[10px]">
           Your unique deposit address: {w0?.address}
         </h3>
       </div>
