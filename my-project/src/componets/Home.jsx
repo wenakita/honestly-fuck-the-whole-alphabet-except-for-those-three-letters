@@ -17,7 +17,7 @@ function Home() {
         />
       </div>
       <div className="mt-10">
-        <h3 className="text-white flex justify-center font-mono font-bold">
+        <h3 className="text-white flex justify-center font-mono font-bold text-[10px]">
           Your unique deposit address: {user?.wallet?.address}
         </h3>
       </div>
