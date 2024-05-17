@@ -46,7 +46,7 @@ function NavBar() {
             to="/home"
             className="text-white text-center p-5 mt-2 font-bold"
           >
-            FriendTool
+            Home
           </Link>
 
           <Link
