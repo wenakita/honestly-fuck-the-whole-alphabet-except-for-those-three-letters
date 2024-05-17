@@ -23,10 +23,9 @@ function Home() {
     <div className="">
       <div className="text-[30px] text-center p-5  flex justify-center">
         <img
-          src="https://i.postimg.cc/1tVjvkNm/IMAGE-2024-05-16-01-17-14.jpg"
-          alt="photo-5051187200489794811-y"
-          border="0"
-          className="w-[450px] mb-2"
+          src="https://ivory-accurate-pig-375.mypinata.cloud/ipfs/QmNfe9547vPVgd8qqdCFeH81yHos1n1CoQZu1D9n5Nrjvp?pinataGatewayToken=DdSIfjJJunjBBaGpRA4VE7rw9Q3bNil3avaM8VrHQkPRh_2vaSMuwGFYGbn9Xzt2"
+          alt=""
+          style={{ maxWidth: "80%" }}
         />
       </div>
       <div className="mt-10">
