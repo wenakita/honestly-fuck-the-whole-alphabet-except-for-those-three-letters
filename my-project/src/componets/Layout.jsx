@@ -3,11 +3,19 @@ import NavBar from "./NavBar";
 import SearchBar from "./SearchBar";
 import { usePrivy } from "@privy-io/react-auth";
 import { useParams } from "react-router-dom";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 function Layout() {
+  const navigate = useNavigate();
   const params = useParams();
   console.log(params.address);
   const { authenticated, user, ready } = usePrivy();
   const wallet = user?.wallet;
+  useEffect(() => {
+    if (!authenticated && !wallet) {
+      navigate("/");
+    }
+  }, [authenticated, wallet]);
   return (
     <div className="container">
       <div className="flex justify-center">

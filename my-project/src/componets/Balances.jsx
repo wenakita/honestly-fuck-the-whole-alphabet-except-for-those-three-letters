@@ -101,10 +101,9 @@ function Balances() {
     <div className="container">
       <div className="text-[30px] text-center p-5  flex justify-center">
         <img
-          src="https://i.postimg.cc/1tVjvkNm/IMAGE-2024-05-16-01-17-14.jpg"
-          alt="photo-5051187200489794811-y"
-          border="0"
-          className="w-[450px] mb-2"
+          src="https://ivory-accurate-pig-375.mypinata.cloud/ipfs/QmNfe9547vPVgd8qqdCFeH81yHos1n1CoQZu1D9n5Nrjvp?pinataGatewayToken=DdSIfjJJunjBBaGpRA4VE7rw9Q3bNil3avaM8VrHQkPRh_2vaSMuwGFYGbn9Xzt2"
+          alt=""
+          style={{ maxWidth: "80%" }}
         />
       </div>
       <div className="flex justify-center">
@@ -129,57 +128,66 @@ function Balances() {
         Your balances
       </h3>
 
-      <div
-        className={`overflow-auto h-[200px] w-[420px] border border-slate-500 rounded-xl`}
-      >
-        {holdingsDataFound.length > 0 ? (
-          <>
-            {holdingsDataFound.map((item, index) => {
-              return (
-                <div
-                  key={index}
-                  className="text-white border border-slate-500 rounded-xl grid grid-flow-col p-3 w-[420px]"
-                >
-                  <div className="flex justify-start gap-2">
-                    <img
-                      src={item?.ftPfpUrl}
-                      alt=""
-                      className="w-8 h-8 rounded-full"
-                    />
-                    <h3 className="text-[10px] text-center mt-2">
-                      {item?.ftName}
-                    </h3>
-                  </div>
-                  <div className="flex justify-center text-[10px] mt-2">
-                    Price: {uintFormat(item?.displayPrice)}
-                  </div>
-                  <div className="flex justify-center text-[10px] mt-2">
-                    Balance: {userHoldings[index].balance}
-                  </div>
-                  <div className="flex justify-end gap-2">
-                    <Link
-                      to={`/friend/${item?.address}`}
-                      className="border border-slate-500 rounded-xl p-2 flex"
-                    >
-                      <img
-                        src="https://i.pinimg.com/originals/49/02/54/4902548424a02117b7913c17d2e379ff.gif"
-                        alt=""
-                        className="w-7 h-6"
-                      />
-                      <span className="text-[10px] mt-1">Mint & Burn</span>
-                      <img
-                        src="https://media0.giphy.com/media/J2awouDsf23R2vo2p5/giphy.gif?cid=6c09b9528hc0btlg9yo7v4fnfa4c0amgumd8n075941rgt12&ep=v1_internal_gif_by_id&rid=giphy.gif&ct=e"
-                        alt=""
-                        className="w-7 h-6"
-                      />
-                    </Link>
-                  </div>
+      {holdingsDataFound.length > 0 ? (
+        <div
+          className={`overflow-auto h-[200px] w-[420px] border border-slate-500 rounded-xl`}
+        >
+          {holdingsDataFound.map((item, index) => {
+            return (
+              <div
+                key={index}
+                className="text-white border border-slate-500 rounded-xl grid grid-flow-col p-3 w-[420px]"
+              >
+                <div className="flex justify-start gap-2">
+                  <img
+                    src={item?.ftPfpUrl}
+                    alt=""
+                    className="w-8 h-8 rounded-full"
+                  />
+                  <h3 className="text-[10px] text-center mt-2">
+                    {item?.ftName}
+                  </h3>
                 </div>
-              );
-            })}
-          </>
-        ) : null}
-      </div>
+                <div className="flex justify-center text-[10px] mt-2">
+                  Price: {uintFormat(item?.displayPrice)}
+                </div>
+                <div className="flex justify-center text-[10px] mt-2">
+                  Balance: {userHoldings[index].balance}
+                </div>
+                <div className="flex justify-end gap-2">
+                  <Link
+                    to={`/friend/${item?.address}`}
+                    className="border border-slate-500 rounded-xl p-2 flex"
+                  >
+                    <img
+                      src="https://i.pinimg.com/originals/49/02/54/4902548424a02117b7913c17d2e379ff.gif"
+                      alt=""
+                      className="w-7 h-6"
+                    />
+                    <span className="text-[10px] mt-1">Mint & Burn</span>
+                    <img
+                      src="https://media0.giphy.com/media/J2awouDsf23R2vo2p5/giphy.gif?cid=6c09b9528hc0btlg9yo7v4fnfa4c0amgumd8n075941rgt12&ep=v1_internal_gif_by_id&rid=giphy.gif&ct=e"
+                      alt=""
+                      className="w-7 h-6"
+                    />
+                  </Link>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="flex justify-center gap-2">
+          <img
+            src="https://forums.frontier.co.uk/attachments/1000012145-png.391294/"
+            alt=""
+            className="w-7 h-7"
+          />
+          <h3 className="text-white font-mono font-bold text-[10px] mt-2">
+            You currently hold no shares
+          </h3>
+        </div>
+      )}
     </div>
   );
 }
