@@ -115,7 +115,7 @@ function Balances() {
         </button>
       </div>
       <div className="mt-10">
-        <h3 className="text-white flex justify-center font-mono font-bold text-[10px]">
+        <h3 className="text-white flex justify-center font-mono font-bold text-[8px] text-center">
           Your unique deposit address: {w0?.address}
         </h3>
       </div>
