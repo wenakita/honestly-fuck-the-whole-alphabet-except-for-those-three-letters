@@ -50,19 +50,16 @@ function TrendingFriends(props) {
                     <div className="flex justify-end text-white gap-2">
                       <Link
                         to={`/friend/${item?.address}`}
-                        className="border border-slate-500 rounded-xl p-2 flex h-[45px]"
+                        className="border border-slate-500 rounded-xl p-2 flex h-[45px] grid grid-flow-col gap-1"
                       >
-                        <img
-                          src="https://i.pinimg.com/originals/49/02/54/4902548424a02117b7913c17d2e379ff.gif"
-                          alt=""
-                          className="w-7 h-6"
-                        />
-                        <span className="text-[8px] mt-2 ">Mint & Burn</span>
-                        <img
-                          src="https://media0.giphy.com/media/J2awouDsf23R2vo2p5/giphy.gif?cid=6c09b9528hc0btlg9yo7v4fnfa4c0amgumd8n075941rgt12&ep=v1_internal_gif_by_id&rid=giphy.gif&ct=e"
-                          alt=""
-                          className="w-7 h-6"
-                        />
+                        <div className="text-[8px] mt-2 ">Mint / Burn</div>
+                        <div>
+                          <img
+                            src="https://www.friend.tech/keysIcon3d.png"
+                            alt=""
+                            className="w-3 h-3 mt-2"
+                          />
+                        </div>
                       </Link>
                     </div>
                   </div>

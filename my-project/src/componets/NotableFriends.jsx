@@ -43,21 +43,16 @@ function NotableFriends(props) {
               </div>
               <Link
                 to={`/friend/${data?.address}`}
-                className="flex justify-start ms-2 mt-1 mb-3 gap-1 border border-slate-500 bg-black w-[110px] rounded-lg"
+                className="flex justify-center ms-2 mt-1 mb-3 gap-1 border border-slate-500 bg-black w-[110px] rounded-lg p-1"
               >
-                <img
-                  src="https://i.pinimg.com/originals/49/02/54/4902548424a02117b7913c17d2e379ff.gif"
-                  alt=""
-                  className="w-5 h-5 mt-0.5"
-                />
-                <h3 className="text-white text-[8px] font-mono font-bold hover:underline mt-1">
-                  Mint & Burn
-                </h3>
-                <img
-                  src="https://media0.giphy.com/media/J2awouDsf23R2vo2p5/giphy.gif?cid=6c09b9528hc0btlg9yo7v4fnfa4c0amgumd8n075941rgt12&ep=v1_internal_gif_by_id&rid=giphy.gif&ct=e"
-                  alt=""
-                  className="w-5 h-5"
-                />
+                <div className="text-[8px] mt-1 text-white">Mint / Burn</div>
+                <div>
+                  <img
+                    src="https://www.friend.tech/keysIcon3d.png"
+                    alt=""
+                    className="w-3 h-3 mt-1"
+                  />
+                </div>
               </Link>
             </div>
           </div>
