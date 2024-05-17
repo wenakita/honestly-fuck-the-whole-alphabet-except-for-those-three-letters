@@ -36,7 +36,7 @@ function TrendingFriends(props) {
                       </h3>
                     </Link>
                   </div>
-                  <div>
+                  <div className="mt-1.5">
                     <div className="flex justify-center overflow-hidden text-[8px] me-2">
                       Share Price: {uintFormat(item?.displayPrice)} Ξ
                     </div>
