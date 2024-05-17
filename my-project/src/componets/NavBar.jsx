@@ -64,7 +64,7 @@ function NavBar() {
           </div>
 
           <button
-            className="text-white p-5 h-[52px]  mt-1 border border-slate-500 rounded-xl"
+            className="text-white p-2 h-[30px]  mt-3.5 border border-slate-500 rounded-xl"
             onClick={logout}
           >
             Logout
