@@ -29,42 +29,37 @@ function NavBar() {
   });
   return (
     <div
-      className={`w-[450px] border border-slate-500 p-2 rounded-xl text-[7px] ${authenticated && wallet ? "flex justify-between" : null}`}
+      className={`w-[450px] border border-slate-500 p-2 rounded-xl text-[9px] ${authenticated && wallet ? "flex justify-between" : null}`}
     >
-      <img
-        src="https://dd.dexscreener.com/ds-data/tokens/base/0xddf7d080c82b8048baae54e376a3406572429b4e.png?size=lg&key=18ea46"
-        alt=""
-        className="w-10 h-10 mt-2"
-      />
       {authenticated && ready ? (
         <>
+          <div className="flex justify-center p-5 gap-2">
+            <img
+              src="https://dd.dexscreener.com/ds-data/tokens/base/0xddf7d080c82b8048baae54e376a3406572429b4e.png?size=lg&key=18ea46"
+              alt=""
+              className="w-8 h-8"
+            />
+            <h3 className="text-white mt-2 text-[10px]">{oooPrice}</h3>
+          </div>
+
           <Link
             to="/home"
-            className="text-white text-center p-5 mt-1 font-bold"
+            className="text-white text-center p-5 mt-2 font-bold"
           >
             FriendTool
           </Link>
 
           <Link
             to={"/balances"}
-            className="text-white text-center p-5 mt-1 font-bold"
+            className="text-white text-center p-5 mt-2 font-bold"
           >
             Balance
           </Link>
 
-          <h3 className="text-white text-center p-5 mt-1 font-bold">Swap</h3>
-
-          <div className="flex justify-center p-5 gap-1">
-            <img
-              src="https://dd.dexscreener.com/ds-data/tokens/base/0xddf7d080c82b8048baae54e376a3406572429b4e.png?size=lg&key=18ea46"
-              alt=""
-              className="w-5 h-5"
-            />
-            <h3 className="text-white mt-1">{oooPrice}</h3>
-          </div>
+          <h3 className="text-white text-center p-5 mt-2 font-bold">Swap</h3>
 
           <button
-            className="text-white p-2 h-[30px]  mt-3.5 border border-slate-500 rounded-xl"
+            className="text-white p-2 h-[30px]  mt-[19.5px] border border-slate-500 rounded-xl"
             onClick={logout}
           >
             Logout

@@ -3,6 +3,7 @@ import { GetTrendingFriends } from "../requests/friendCalls";
 import { usePrivy, useWallets } from "@privy-io/react-auth";
 import TrendingFriends from "./TrendingFriends";
 import NotableFriends from "./NotableFriends";
+import GlobalActivity from "./GlobalActivity";
 import { useEffect, useState } from "react";
 function Home() {
   const [loading, setLoading] = useState(true);
@@ -49,6 +50,9 @@ function Home() {
           <div className="flex justify-center mt-10">
             <TrendingFriends data={trendingFriends} />
           </div>
+          {/* <div className="flex justify-center mt-10">
+            <GlobalActivity />
+          </div> */}
         </>
       )}
     </div>

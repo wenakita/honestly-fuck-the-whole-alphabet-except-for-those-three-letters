@@ -106,6 +106,27 @@ function dissectShares(data) {
   return foundShares;
 }
 
+export async function fetchGlobalActivity() {
+  console.log("here");
+  console.log(import.meta.env.VITE_FRIEND_TECH_JWT);
+  try {
+    const response = await fetch(
+      "https://prod-api.kosetto.com/global-activity-v2"
+    );
+    const data = await response.json();
+    dissectBuyTypes(data.events);
+    return "1";
+  } catch (error) {
+    return null;
+  }
+}
+
+async function dissectBuyTypes(data) {
+  for (const key in data) {
+    console.log(data[key]);
+  }
+}
+
 // export async function GetTargetShareBalance(
 //   userAddress,
 //   targetAddress,
