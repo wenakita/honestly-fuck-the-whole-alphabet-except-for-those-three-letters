@@ -1,11 +1,15 @@
 import propTypes from "prop-types";
 import { GetTrendingFriends } from "../requests/friendCalls";
-import { usePrivy } from "@privy-io/react-auth";
+import { usePrivy, useWallets } from "@privy-io/react-auth";
 import TrendingFriends from "./TrendingFriends";
 function Home() {
+  const { wallets } = useWallets();
+  const w0 = wallets[0];
   const { user } = usePrivy();
   const trendingFriends = GetTrendingFriends();
   console.log(trendingFriends);
+  const width = window.innerWidth;
+  const length = window.innerHeight;
 
   return (
     <div className="">
@@ -23,6 +27,9 @@ function Home() {
       </div>
       <div className=" mt-10">
         <TrendingFriends data={trendingFriends} />
+      </div>
+      <div className="flex-justify-end mt-10">
+        <h3 className="text-white">{"W: " + width + "  L:" + length}</h3>
       </div>
     </div>
   );
