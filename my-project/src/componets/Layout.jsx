@@ -21,7 +21,7 @@ function Layout() {
       <div className="">
         <Outlet />
       </div>
-      <footer className="mt-5 border border-slate-500 p-2">
+      {/* <footer className="mt-5 border border-slate-500 p-2">
         <div className="flex justify-between">
           <img
             src="https://dd.dexscreener.com/ds-data/tokens/base/0xddf7d080c82b8048baae54e376a3406572429b4e.png?size=lg&key=18ea46"
@@ -32,7 +32,7 @@ function Layout() {
             @2024 Goddog
           </h3>
         </div>
-      </footer>
+      </footer> */}
     </div>
   );
 }

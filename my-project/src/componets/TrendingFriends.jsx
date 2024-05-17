@@ -9,6 +9,7 @@ function TrendingFriends(props) {
       <h3 className="text-white text-center mb-5 text-[20px] font-mono font-bold">
         Trending friends
       </h3>
+
       <div className="mt-2 overflow-auto h-[550px] border border-slate-500 rounded-xl">
         {data ? (
           <>
@@ -29,14 +30,14 @@ function TrendingFriends(props) {
                         className="w-10 h-10 rounded-full"
                       />
                       <h3
-                        className={`mt-2 ${item?.ftName.length >= 11 ? "text-[8px]" : "text-[12px] text-center"}`}
+                        className={`mt-2 ${item?.ftName.length >= 11 ? "text-[8px] text-center" : "text-[12px] text-center font-bold"}`}
                       >
                         {item?.ftName}
                       </h3>
                     </Link>
                   </div>
                   <div>
-                    <div className="flex justify-center overflow-hidden text-[10px] me-2">
+                    <div className="flex justify-center overflow-hidden text-[8px] me-2">
                       Share Price: {uintFormat(item?.displayPrice)} Ξ
                     </div>
                     <div className="mt-1">
@@ -56,7 +57,7 @@ function TrendingFriends(props) {
                           alt=""
                           className="w-7 h-6"
                         />
-                        <span className="text-[10px] mt-1">Mint & Burn</span>
+                        <span className="text-[8px] mt-2 ">Mint & Burn</span>
                         <img
                           src="https://media0.giphy.com/media/J2awouDsf23R2vo2p5/giphy.gif?cid=6c09b9528hc0btlg9yo7v4fnfa4c0amgumd8n075941rgt12&ep=v1_internal_gif_by_id&rid=giphy.gif&ct=e"
                           alt=""
