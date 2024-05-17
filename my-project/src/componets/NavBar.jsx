@@ -29,7 +29,7 @@ function NavBar() {
   });
   return (
     <div
-      className={`w-[450px] border border-slate-500 p-2 rounded-xl text-[9px] ${authenticated && wallet ? "flex justify-between" : null}`}
+      className={`w-[440px] border border-slate-500 p-2 rounded-xl text-[9px] ${authenticated && wallet ? "flex justify-between" : null}`}
     >
       {authenticated && ready ? (
         <>
@@ -64,7 +64,7 @@ function NavBar() {
 
           <h3 className="text-white text-center p-5 mt-2 font-bold">Swap</h3>
 
-          <div className="grid grid-flow-row">
+          <div className="grid grid-flow-row me-3">
             <button
               className="text-white p-2 h-[30px]  mt-[19.5px] border border-slate-500 rounded-xl"
               onClick={logout}
