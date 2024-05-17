@@ -43,7 +43,7 @@ function Home() {
           <div className="flex justify-center">
             <NotableFriends data={notableTrendingFriends} />
           </div>
-          <div className="flex justify-center mt-10">
+          <div className="flex justify-center mt-10 mb-10">
             <TrendingFriends data={trendingFriends} />
           </div>
           {/* <div className="flex justify-center mt-10">
