@@ -209,15 +209,11 @@ function FriendSwap(props) {
           </h3>
         </div>
       ) : null}
-      <div className="flex justify-start">
+      <div className="flex justify-start gap-1">
         <img
-          src={
-            shouldWrap
-              ? "https://i.pinimg.com/originals/49/02/54/4902548424a02117b7913c17d2e379ff.gif"
-              : "https://media3.giphy.com/media/J2awouDsf23R2vo2p5/giphy.gif?cid=6c09b95271qkr9h7zeqhzcchzf0g93pzapi9qzlx1f8ha35c&ep=v1_internal_gif_by_id&rid=giphy.gif&ct=e"
-          }
+          src={"https://www.friend.tech/keysIcon3d.png"}
           alt=""
-          className="w-5 h-5"
+          className="w-4 h-4 mt-1"
         />
         <h3 className="text-white">
           {shouldWrap ? "Mint Shares" : "Burn Shares"}
