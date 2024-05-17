@@ -101,9 +101,10 @@ function Balances() {
     <div className="container">
       <div className="text-[30px] text-center p-5  flex justify-center">
         <img
-          src="https://i.ibb.co/ZhgDHGJ/photo-5051187200489794811-y.jpg"
+          src="https://i.postimg.cc/1tVjvkNm/IMAGE-2024-05-16-01-17-14.jpg"
           alt="photo-5051187200489794811-y"
           border="0"
+          className="w-[450px] mb-2"
         />
       </div>
       <div className="flex justify-center">
@@ -124,16 +125,20 @@ function Balances() {
           ETH Balance: {ETHBalance?.data?.formatted}
         </h3>
       </div>
-      <h3 className="text-white text-center mt-10">Your balances: </h3>
+      <h3 className="text-white text-center mt-10 font-mono font-bold mb-3">
+        Your balances
+      </h3>
 
-      <div className=" mt-2 flex justify-center">
+      <div
+        className={`overflow-auto h-[200px] w-[420px] border border-slate-500 rounded-xl`}
+      >
         {holdingsDataFound.length > 0 ? (
-          <div className="">
+          <>
             {holdingsDataFound.map((item, index) => {
               return (
                 <div
                   key={index}
-                  className="text-white border border-slate-500 rounded-xl grid grid-cols-4 p-3 mt-3 w-[800px]"
+                  className="text-white border border-slate-500 rounded-xl grid grid-flow-col p-3 w-[420px]"
                 >
                   <div className="flex justify-start gap-2">
                     <img
@@ -141,7 +146,9 @@ function Balances() {
                       alt=""
                       className="w-8 h-8 rounded-full"
                     />
-                    <h3 className="text-[12px] mt-2">{item?.ftName}</h3>
+                    <h3 className="text-[10px] text-center mt-2">
+                      {item?.ftName}
+                    </h3>
                   </div>
                   <div className="flex justify-center text-[10px] mt-2">
                     Price: {uintFormat(item?.displayPrice)}
@@ -170,7 +177,7 @@ function Balances() {
                 </div>
               );
             })}
-          </div>
+          </>
         ) : null}
       </div>
     </div>

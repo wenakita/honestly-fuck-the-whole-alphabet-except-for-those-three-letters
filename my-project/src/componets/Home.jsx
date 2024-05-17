@@ -18,18 +18,16 @@ function Home() {
           src="https://i.postimg.cc/1tVjvkNm/IMAGE-2024-05-16-01-17-14.jpg"
           alt="photo-5051187200489794811-y"
           border="0"
+          className="w-[450px] mb-2"
         />
       </div>
       <div className="mt-10">
         <h3 className="text-white flex justify-center font-mono font-bold text-[10px]">
-          Your unique deposit address: {user?.wallet?.address}
+          Wallet address: {user?.wallet?.address}
         </h3>
       </div>
-      <div className=" mt-10">
+      <div className="flex justify-center mt-10">
         <TrendingFriends data={trendingFriends} />
-      </div>
-      <div className="flex-justify-end mt-10">
-        <h3 className="text-white">{"W: " + width + "  L:" + length}</h3>
       </div>
     </div>
   );
@@ -40,3 +38,6 @@ Home.propTypes = {
 };
 
 export default Home;
+
+//tg desktop app dimensions : w- 380, l -557
+//ios tg app dimensions: w-428, l-734
