@@ -201,7 +201,7 @@ function FriendSwap(props) {
   }
 
   return (
-    <div className="border border-slate-500 rounded-xl p-3">
+    <div className="border border-slate-500 rounded-xl p-3 mt-3">
       {alert.message !== null ? (
         <div className="mb-2 mt-3">
           <h3 className={`text-white text-center text-[10px]`}>
@@ -209,12 +209,25 @@ function FriendSwap(props) {
           </h3>
         </div>
       ) : null}
-      <h3 className="text-white underline">
-        {shouldWrap ? "Mint Shares" : "Burn Shares"}
-      </h3>
+      <div className="flex justify-start">
+        <img
+          src={
+            shouldWrap
+              ? "https://i.pinimg.com/originals/49/02/54/4902548424a02117b7913c17d2e379ff.gif"
+              : "https://media3.giphy.com/media/J2awouDsf23R2vo2p5/giphy.gif?cid=6c09b95271qkr9h7zeqhzcchzf0g93pzapi9qzlx1f8ha35c&ep=v1_internal_gif_by_id&rid=giphy.gif&ct=e"
+          }
+          alt=""
+          className="w-5 h-5"
+        />
+        <h3 className="text-white">
+          {shouldWrap ? "Mint Shares" : "Burn Shares"}
+        </h3>
+      </div>
 
-      <div className="grid grid-flow-row gap-2 mt-3">
-        <h3 className="text-white">{shouldWrap ? "Mint" : "Burn"}</h3>
+      <div className="grid grid-flow-row gap-2 mt-6">
+        <h3 className="text-white font-mono font-light text-[12px] ms-0.5">
+          {shouldWrap ? "Mint" : "Burn"}
+        </h3>
         <input
           type="text"
           className="w-[330px] bg-stone-800 text-white rounded-lg"
@@ -248,7 +261,7 @@ function FriendSwap(props) {
             </svg>
           </button>
         </div>
-        <h3 className="text-white">
+        <h3 className="text-white font-mono font-light text-[12px]">
           {shouldWrap ? "Share Value" : "ETH Recieved"}
         </h3>
 
@@ -272,7 +285,7 @@ function FriendSwap(props) {
             }}
           >
             <div className="flex justify-center gap-2">
-              <h3>{shouldWrap ? "Mint" : "Burn"}</h3>
+              <h3 className="">{shouldWrap ? "Mint" : "Burn"}</h3>
               <img
                 src={
                   shouldWrap

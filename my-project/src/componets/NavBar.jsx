@@ -33,14 +33,20 @@ function NavBar() {
     >
       {authenticated && ready ? (
         <>
-          <div className="flex justify-center p-5 gap-2">
+          <Link
+            to={
+              "https://app.uniswap.org/swap?outputCurrency=0xDDf7d080C82b8048BAAe54e376a3406572429b4e&chain=base"
+            }
+            target="_blank"
+            className="flex justify-center p-5 gap-2"
+          >
             <img
               src="https://dd.dexscreener.com/ds-data/tokens/base/0xddf7d080c82b8048baae54e376a3406572429b4e.png?size=lg&key=18ea46"
               alt=""
               className="w-8 h-8"
             />
             <h3 className="text-white mt-2 text-[10px]">{oooPrice}</h3>
-          </div>
+          </Link>
 
           <Link
             to="/home"

@@ -127,6 +127,28 @@ async function dissectBuyTypes(data) {
   }
 }
 
+export async function fetchFollowers(userAddress) {
+  console.log(userAddress);
+  try {
+    const response = await fetch(
+      `https://prod-api.kosetto.com/users/${userAddress}/following-list?requester=${userAddress}`,
+      {
+        headers: {
+          Authorization: import.meta.env.VITE_FRIEND_TECH_JWT,
+        },
+      }
+    );
+    const data = await response.json();
+    const result = await data.followingList;
+    if (result.length > 3) {
+      return [result[0], result[1], result[2]];
+    } else {
+      return [result[0]];
+    }
+  } catch (error) {
+    return null;
+  }
+}
 // export async function GetTargetShareBalance(
 //   userAddress,
 //   targetAddress,
