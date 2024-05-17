@@ -58,12 +58,19 @@ function NavBar() {
 
           <h3 className="text-white text-center p-5 mt-2 font-bold">Swap</h3>
 
-          <button
-            className="text-white p-2 h-[30px]  mt-[19.5px] border border-slate-500 rounded-xl"
-            onClick={logout}
-          >
-            Logout
-          </button>
+          <div className="grid grid-flow-row">
+            <button
+              className="text-white p-2 h-[30px]  mt-[19.5px] border border-slate-500 rounded-xl"
+              onClick={logout}
+            >
+              <div>Logout</div>
+            </button>
+            <div className="text-white text-center">
+              {address.slice(0, 3) +
+                "..." +
+                address.slice(address.length - 3, address.length)}
+            </div>
+          </div>
         </>
       ) : null}
     </div>
