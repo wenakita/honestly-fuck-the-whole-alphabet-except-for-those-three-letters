@@ -29,11 +29,7 @@ function Home() {
           style={{ maxWidth: "80%" }}
         />
       </div>
-      <div className="mt-10">
-        <h3 className="text-white flex justify-center font-mono font-bold text-[10px]">
-          Wallet address: {user?.wallet?.address}
-        </h3>
-      </div>
+
       {loading ? (
         <div className="flex justify-center mt-20 mb-10">
           <img
