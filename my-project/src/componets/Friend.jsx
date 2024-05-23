@@ -35,7 +35,7 @@ function Friend() {
 
   console.log(address);
   return (
-    <div className="mt-10 container p-5">
+    <div className="mt-10 container p-5 mb-10">
       {loading ? (
         <div className="flex justify-center mt-56 mb-10">
           <img
@@ -48,7 +48,7 @@ function Friend() {
         <>
           {data !== null ? (
             <div className="flex justify-center">
-              <div className="border border-slate-500 rounded-xl w-[400px] p-5">
+              <div className="border border-slate-500 rounded-xl w-[400px] p-5 mb-20">
                 <div className="p-2">
                   <img
                     src={data?.ftPfpUrl}
