@@ -29,23 +29,21 @@ function MyPools() {
   });
 
   const goddogBalance = Number(goddogBalanceResult?.data?.value) / 10 ** 18;
-  console.log(goddogBalance);
-  console.log();
   const [selectedShare, setSelectedShare] = useState(null);
   const [shareInfo, setShareInfo] = useState(null);
   const [open, setOpen] = useState(false);
   useEffect(() => {
     getActivePools();
-  }, []);
+  });
   useEffect(() => {
     w0?.getEthersProvider().then(async (provider) => {
       const network = await provider.getNetwork();
       await w0.switchChain(8453);
     });
   }, [w0]);
-  useEffect(() => {
-    console.log(selectedShare);
-  }, [selectedShare]);
+  // useEffect(() => {
+  //   console.log(selectedShare);
+  // }, [selectedShare]);
 
   async function addNetwork() {
     console.info("Adding network");
@@ -76,12 +74,9 @@ function MyPools() {
       const currentOwner = a[key].owner;
 
       if (currentOwner.localeCompare(userAddress.trim().toLowerCase()) === 0) {
-        console.log("true");
-        console.log(a[key]);
         usersFoundPools.push(a[key]);
       }
     }
-    console.log(usersFoundPools);
     setUserPools(usersFoundPools);
   }
 
@@ -266,7 +261,6 @@ function MyPools() {
                           type="text"
                           className="w-[300px] bg-stone-700 rounded-lg text-white text-[11.5px] p-0.5"
                           onChange={(e) => {
-                            console.log(e.target.value);
                             setInput(e.target.value);
                           }}
                           placeholder="Enter $OOOooo Amount..."
@@ -288,7 +282,6 @@ function MyPools() {
                           className="w-[300px] bg-stone-700 rounded-lg text-stone-300 text-[11.5px] p-0.5"
                           placeholder="Enter Share Amount..."
                           onChange={(e) => {
-                            console.log(e.target.value);
                             setShareAmount(e.target.value);
                           }}
                         />
@@ -310,7 +303,6 @@ function MyPools() {
                           type="text"
                           className="w-[100px] bg-stone-700 rounded-lg text-white text-[8px] p-0.5"
                           onChange={(e) => {
-                            console.log(e.target.value);
                             setSpotPrice(e.target.value);
                           }}
                         />
@@ -321,7 +313,6 @@ function MyPools() {
                           type="text"
                           className="w-[100px] bg-stone-700 rounded-lg text-white text-[8px] p-0.5"
                           onChange={(e) => {
-                            console.log(e.target.value);
                             setFee(e.target.value);
                           }}
                         />
@@ -361,6 +352,3 @@ function MyPools() {
 export default MyPools;
 
 // 0xbeea45F16D512a01f7E2a3785458D4a7089c8514
-{
-  /* <Pools userPools={userPools} /> */
-}
