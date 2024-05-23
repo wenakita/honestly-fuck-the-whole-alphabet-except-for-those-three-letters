@@ -61,6 +61,7 @@ function FriendSwap(props) {
   }
 
   async function getShareBalance(id) {
+    console.log(id);
     try {
       const balanceResult = await readContract(config, {
         abi: FriendTechABI,
@@ -68,6 +69,7 @@ function FriendSwap(props) {
         functionName: "balanceOf",
         args: [w0?.address, id],
       });
+      console.log(id, balanceResult);
       setBalance(Number(balanceResult));
     } catch (error) {
       console.log(error);

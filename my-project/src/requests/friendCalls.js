@@ -8,6 +8,14 @@ const options = {
     "x-api-key": "3652122689914635ac7806c7547255fe",
   },
 };
+const debankOptions = {
+  method: "GET",
+  headers: {
+    accept: "application/json",
+    AccessKey: "ff780c99533c7de9d82cc0b5826e8fc1ca114207",
+  },
+};
+
 export function GetTrendingFriends() {
   const [trendingUsers, setTrendingUsers] = useState([]);
   useEffect(() => {
@@ -77,14 +85,48 @@ function formatUserName(target) {
   return target;
 }
 
+// export async function findId(userAddress) {
+//   console.log(userAddress);
+//   try {
+//     const response = await fetch(
+//       `https://api.opensea.io/api/v2/chain/base/account/${userAddress}/nfts`,
+//       options
+//     );
+//     const data = await response.json();
+//     const output = dissectShares(data.nfts);
+//     console.log(data);
+//     return output;
+//   } catch (error) {
+//     console.log(error);
+//     return null;
+//   }
+// }
+
+// function dissectShares(data) {
+//   let foundShares = [];
+//   console.log(data);
+//   for (const key in data) {
+//     if (
+//       data[key].collection === "wrapped-friendtech" &&
+//       data[key].token_standard === "erc1155"
+//     ) {
+//       foundShares.push(data[key]);
+//     }
+//   }
+//   return foundShares;
+// }
+
+// findNftHoldings("0x0f76Cd9bb6b3b7eAeDA808818218d61F923b3494");
 export async function findId(userAddress) {
   try {
-    const response = await fetch(
-      `https://api.opensea.io/api/v2/chain/base/account/${userAddress}/nfts`,
-      options
+    const res = await fetch(
+      `https://pro-openapi.debank.com/v1/user/nft_list?id=${userAddress}&chain_id=base`,
+      debankOptions
     );
-    const data = await response.json();
-    const output = dissectShares(data.nfts);
+    const data = await res.json();
+    console.log(data);
+    const output = await formatDebankResponse(data);
+    console.log(output);
     return output;
   } catch (error) {
     console.log(error);
@@ -92,18 +134,21 @@ export async function findId(userAddress) {
   }
 }
 
-function dissectShares(data) {
-  let foundShares = [];
+async function formatDebankResponse(data) {
   console.log(data);
+  let formattedBalance = [];
   for (const key in data) {
     if (
-      data[key].collection === "wrapped-friendtech" &&
-      data[key].token_standard === "erc1155"
+      data[key].contract_id === "0xbeea45f16d512a01f7e2a3785458d4a7089c8514"
     ) {
-      foundShares.push(data[key]);
+      const currentId = data[key].inner_id;
+      formattedBalance.push({
+        identifier: currentId,
+      });
     }
   }
-  return foundShares;
+  console.log(formattedBalance);
+  return formattedBalance;
 }
 
 export async function fetchGlobalActivity() {

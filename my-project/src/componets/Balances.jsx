@@ -7,12 +7,14 @@ import FriendTechABi from "../abi/FriendTechABi";
 import { uintFormat } from "../formatters/format";
 import { Link } from "react-router-dom";
 import { useBalance } from "wagmi";
-function Balances() {
+import { useLocation } from "react-router-dom";
+function Balances(props) {
+  const location = useLocation();
+  console.log(location.pathname);
   const { exportWallet } = usePrivy();
   const [userHoldings, setUserHoldings] = useState([]);
   const [holdingsDataFound, setHoldingsDataFound] = useState([]);
-  const [isOpen, setIsOpen] = useState(false);
-  const [isShowing, setIsShowing] = useState(false);
+
   const { wallets } = useWallets();
   const w0 = wallets[0];
   const userAddress = w0?.address;
@@ -22,13 +24,15 @@ function Balances() {
 
   useEffect(() => {
     getShareHoldings();
-  }, []);
+  }, [userAddress]);
 
   async function getHoldingData(holdings) {
     const finalHoldings = [];
     for (const key in holdings) {
       const currentAddress = holdings[key].address;
       const current = await fetchContract(currentAddress);
+      console.log(current);
+
       if (current !== null) {
         finalHoldings.push(current);
       }
@@ -53,8 +57,10 @@ function Balances() {
     const userShareHoldings = [];
     const userSharesFound = await findId(userAddress);
     for (const key in userSharesFound) {
+      console.log(userSharesFound[key]);
       const currentShareId = userSharesFound[key].identifier;
       const currentShareContract = await findShare(currentShareId);
+      console.log(currentShareContract);
       const currentShareBalance = await getShareBalance(currentShareId);
       userShareHoldings.push({
         id: currentShareId,
@@ -99,35 +105,6 @@ function Balances() {
   }
   return (
     <div className="container">
-      <div className="text-[30px] text-center p-5  flex justify-center">
-        <img
-          src="https://ivory-accurate-pig-375.mypinata.cloud/ipfs/QmNfe9547vPVgd8qqdCFeH81yHos1n1CoQZu1D9n5Nrjvp?pinataGatewayToken=DdSIfjJJunjBBaGpRA4VE7rw9Q3bNil3avaM8VrHQkPRh_2vaSMuwGFYGbn9Xzt2"
-          alt=""
-          style={{ maxWidth: "80%" }}
-        />
-      </div>
-      <div className="flex justify-center">
-        <button
-          className="text-white border border-slate-500 p-2 rounded-xl hover:bg-white hover:text-black"
-          onClick={exportWallet}
-        >
-          Export Wallet
-        </button>
-      </div>
-      <div className="mt-10">
-        <h3 className="text-white flex justify-center font-mono font-bold text-[8px] text-center">
-          Your unique deposit address: {w0?.address}
-        </h3>
-      </div>
-      <div className="text-center">
-        <h3 className="text-white text-[10px] font-mono mt-2">
-          ETH Balance: {ETHBalance?.data?.formatted}
-        </h3>
-      </div>
-      <h3 className="text-white text-center mt-10 font-mono font-bold mb-3">
-        Your balances
-      </h3>
-
       {holdingsDataFound.length > 0 ? (
         <div
           className={`overflow-auto h-[200px] w-[420px] border border-slate-500 rounded-xl`}
@@ -155,22 +132,40 @@ function Balances() {
                   Balance: {userHoldings[index].balance}
                 </div>
                 <div className="flex justify-end gap-2">
-                  <Link
-                    to={`/friend/${item?.address}`}
-                    className="border border-slate-500 rounded-xl p-2 flex"
-                  >
-                    <img
-                      src="https://i.pinimg.com/originals/49/02/54/4902548424a02117b7913c17d2e379ff.gif"
-                      alt=""
-                      className="w-7 h-6"
-                    />
-                    <span className="text-[10px] mt-1">Mint & Burn</span>
-                    <img
-                      src="https://media0.giphy.com/media/J2awouDsf23R2vo2p5/giphy.gif?cid=6c09b9528hc0btlg9yo7v4fnfa4c0amgumd8n075941rgt12&ep=v1_internal_gif_by_id&rid=giphy.gif&ct=e"
-                      alt=""
-                      className="w-7 h-6"
-                    />
-                  </Link>
+                  {location.pathname !== "/my-pools" ? (
+                    <Link
+                      to={`/friend/${item?.address}`}
+                      className="border border-slate-500 rounded-xl p-2 flex"
+                    >
+                      <img
+                        src="https://i.pinimg.com/originals/49/02/54/4902548424a02117b7913c17d2e379ff.gif"
+                        alt=""
+                        className="w-7 h-6"
+                      />
+                      <span className="text-[10px] mt-1">Mint & Burn</span>
+                      <img
+                        src="https://media0.giphy.com/media/J2awouDsf23R2vo2p5/giphy.gif?cid=6c09b9528hc0btlg9yo7v4fnfa4c0amgumd8n075941rgt12&ep=v1_internal_gif_by_id&rid=giphy.gif&ct=e"
+                        alt=""
+                        className="w-7 h-6"
+                      />
+                    </Link>
+                  ) : (
+                    <>
+                      <button
+                        className="border border-slate-500 rounded-xl p-2 flex text-[10px]"
+                        onClick={() => {
+                          console.log(item?.ftName);
+                          if (props.setter) {
+                            props.setter(item);
+                            props.setOpen(true);
+                            props.info(userHoldings[index]);
+                          }
+                        }}
+                      >
+                        Create a pool
+                      </button>
+                    </>
+                  )}
                 </div>
               </div>
             );

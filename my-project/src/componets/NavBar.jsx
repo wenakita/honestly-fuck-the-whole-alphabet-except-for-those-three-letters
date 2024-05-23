@@ -29,7 +29,7 @@ function NavBar() {
   });
   return (
     <div
-      className={`w-[440px] border border-slate-500 p-2 rounded-xl text-[9px] ${authenticated && wallet ? "flex justify-between" : null}`}
+      className={`w-[440px] border border-slate-500 p-2 rounded-xl text-[8px] ${authenticated && wallet ? "flex justify-between" : null}`}
     >
       {authenticated && ready ? (
         <>
@@ -54,6 +54,12 @@ function NavBar() {
           >
             Home
           </Link>
+          <Link
+            to="/pools"
+            className="text-white text-center p-5 mt-2 font-bold"
+          >
+            Pools
+          </Link>
 
           <Link
             to={"/balances"}
@@ -62,7 +68,12 @@ function NavBar() {
             Balance
           </Link>
 
-          <h3 className="text-white text-center p-5 mt-2 font-bold">Swap</h3>
+          <Link
+            to={"/my-pools"}
+            className="text-white text-center p-5 mt-2 font-bold"
+          >
+            My Pools
+          </Link>
 
           <div className="grid grid-flow-row me-3">
             <button

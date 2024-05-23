@@ -22,7 +22,7 @@
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.23.1",
     "sort-by": "^1.2.0",
-    "sudo-defined-quoter": "^1.0.8",
+    "sudo-defined-quoter": "^1.0.10",
     "viem": "^2.10.3",
     "wagmi": "*"
   },
