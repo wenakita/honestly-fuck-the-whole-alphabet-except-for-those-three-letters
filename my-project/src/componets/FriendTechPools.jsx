@@ -12,8 +12,7 @@ function FriendTechPools() {
   const [isLoading, setLoading] = useState(true);
   useEffect(() => {
     getExistingPools();
-  });
-
+  }, []);
   useEffect(() => {
     setTimeout(() => {
       setLoading(false);
@@ -26,6 +25,7 @@ function FriendTechPools() {
     let a = await q.getPoolsForCollection(
       "0xbeea45F16D512a01f7E2a3785458D4a7089c8514"
     );
+    console.log(a);
     for (const key in a) {
       const currentId = a[key]?.erc1155Id;
       const currentShareContract = await getShareUri(currentId);
@@ -95,7 +95,7 @@ function FriendTechPools() {
       ) : (
         <center className="mt-5 ms-10">
           <div className="border border-slate-500 p-2 rounded-xl">
-            {poolsData.length > 0 ? (
+            {poolsData !== null ? (
               <>
                 {poolsData.map((item) => {
                   return (
@@ -146,12 +146,18 @@ function FriendTechPools() {
                         </div>
                         <div className="flex justify-start ms-2 font-mono font-bold text-white text-[10px] mt-1">
                           <h3>
-                            Swap Fee: % {uintFormat(item?.sudoSwapData?.fee)}
+                            Swap Fee: %{" "}
+                            {Number(
+                              uintFormat(item?.sudoSwapData?.fee) * 100
+                            ).toFixed(2)}
                           </h3>
                         </div>
                         <div className="flex justify-center text-[12px] text-white mt-3 gap-2">
                           <button className="border text-center p-1 bg-black rounded-xl border-slate-500 ">
                             Purchase Shares
+                          </button>
+                          <button className="border text-center p-1 bg-black rounded-xl border-slate-500 ">
+                            Sell Shares
                           </button>
                         </div>
                       </div>
@@ -182,3 +188,5 @@ export default FriendTechPools;
 //ok so basically users who do ot own the pool can purchase shares only from the looks of it
 
 //those who own the shares can deposit shares deposit goddog and withdraw both etc
+
+//so how the pool works is when we make a pool we add the initial goddog liquidity and on each buy the initial goddog token balance in the pool increases on sell i asume the token amount in th epool decreases just like any other pool

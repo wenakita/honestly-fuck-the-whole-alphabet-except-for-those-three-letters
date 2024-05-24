@@ -9,10 +9,12 @@ import SudoSwapABI from "../abi/SudoSwapABI";
 import friendTechABI from "../abi/FriendTechABi";
 import GodDogABI from "../abi/GodDogABI";
 import { ethers } from "ethers";
+import { useNavigate } from "react-router-dom";
 import Pools from "./Pools";
 const API_KEY = import.meta.env.VITE_DEFINED_KEY;
 
 function MyPools() {
+  const navigate = useNavigate();
   const [userPools, setUserPools] = useState(null);
   const [input, setInput] = useState("");
   const [spotPrice, setSpotPrice] = useState("");
@@ -34,7 +36,7 @@ function MyPools() {
   const [open, setOpen] = useState(false);
   useEffect(() => {
     getActivePools();
-  });
+  }, []);
   useEffect(() => {
     w0?.getEthersProvider().then(async (provider) => {
       const network = await provider.getNetwork();
@@ -148,6 +150,7 @@ function MyPools() {
     );
     console.log(shareInfo.id);
     console.log(w0?.address);
+    console.log(spotPrice);
     try {
       console.log("running");
       const parameters = [
@@ -157,7 +160,7 @@ function MyPools() {
         String(w0?.address), // assetRecipient
         2, // poolType (assuming this should be uint8 and is 1)
         ethers.BigNumber.from("1069000000000000000"), // delta(the change in slope, change in price per purchase)
-        ethers.BigNumber.from(fee), // fee
+        ethers.BigNumber.from(fee).mul(ethers.BigNumber.from("10").pow(16)), // fee
         ethers.BigNumber.from(spotPrice).mul(
           ethers.BigNumber.from("10").pow(18)
         ), // spotPrice this is the price in goddog for the nft
@@ -352,3 +355,13 @@ function MyPools() {
 export default MyPools;
 
 // 0xbeea45F16D512a01f7E2a3785458D4a7089c8514
+
+//base chain curve type addresses
+//Exponential curve: 0x9506C0E5CEe9AD1dEe65B3539268D61CCB25aFB6,
+//Linear curve: 0xe41352CB8D9af18231E05520751840559C2a548A
+//Xyk curve: 0xd0A2f4ae5E816ec09374c67F6532063B60dE037B
+//Gda curve: 0x4f1627be4C72aEB9565D4c751550C4D262a96B51
+
+//sudoswap address to make the pools and do other things for owners of the specific pool: 0x605145d263482684590f630e9e581b21e4938eb8
+
+//Sudoswap address to call buy and sell for the pool:
