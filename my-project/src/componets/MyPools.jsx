@@ -20,6 +20,7 @@ function MyPools() {
   const [spotPrice, setSpotPrice] = useState("");
   const [fee, setFee] = useState("");
   const [shareAmount, setShareAmount] = useState("");
+  const [loading, setLoading] = useState(true);
 
   const { wallets } = useWallets();
   const w0 = wallets[0];
@@ -36,6 +37,9 @@ function MyPools() {
   const [open, setOpen] = useState(false);
   useEffect(() => {
     getActivePools();
+    setTimeout(() => {
+      setLoading(false);
+    }, [2000]);
   }, []);
   useEffect(() => {
     w0?.getEthersProvider().then(async (provider) => {
@@ -151,19 +155,19 @@ function MyPools() {
     console.log(shareInfo.id);
     console.log(w0?.address);
     console.log(spotPrice);
+
+    //the spot price has to be the shares current price calculate din goddog value
     try {
       console.log("running");
       const parameters = [
         "0xDDf7d080C82b8048BAAe54e376a3406572429b4e", // token
         "0xbeea45F16D512a01f7E2a3785458D4a7089c8514", // nft
-        "0x9506C0E5CEe9AD1dEe65B3539268D61CCB25aFB6", // bondingCurve
+        "0xd0A2f4ae5E816ec09374c67F6532063B60dE037B", // bondingCurve
         String(w0?.address), // assetRecipient
         2, // poolType (assuming this should be uint8 and is 1)
-        ethers.BigNumber.from("1069000000000000000"), // delta(the change in slope, change in price per purchase)
+        ethers.BigNumber.from("4"), // delta(the change in slope, change in price per purchase)
         ethers.BigNumber.from(fee).mul(ethers.BigNumber.from("10").pow(16)), // fee
-        ethers.BigNumber.from(spotPrice).mul(
-          ethers.BigNumber.from("10").pow(18)
-        ), // spotPrice this is the price in goddog for the nft
+        ethers.BigNumber.from(input).mul(ethers.BigNumber.from("10").pow(18)), // spotPrice this is the price in goddog for the nft
         shareInfo.id, // nftId (uint256)
         ethers.BigNumber.from(shareAmount), // initialNFTBalance (uint256)
         ethers.BigNumber.from(input)
@@ -183,172 +187,200 @@ function MyPools() {
     }
   }
   //it works lfg now find how to properly manage it
+
   return (
-    <div className="">
-      <div className="text-[30px] text-center p-5  flex justify-center">
-        <img
-          src="https://ivory-accurate-pig-375.mypinata.cloud/ipfs/QmNfe9547vPVgd8qqdCFeH81yHos1n1CoQZu1D9n5Nrjvp?pinataGatewayToken=DdSIfjJJunjBBaGpRA4VE7rw9Q3bNil3avaM8VrHQkPRh_2vaSMuwGFYGbn9Xzt2"
-          alt=""
-          style={{ maxWidth: "80%" }}
-        />
-      </div>
-      <div className="text-center font-mono font-bold text-white text-[20px]">
-        Shares Owned:
-      </div>
-      <center className="mt-10 mb-10">
-        <Balances
-          setter={setSelectedShare}
-          setOpen={setOpen}
-          info={setShareInfo}
-        />
-      </center>
-      <div className="text-center font-mono font-bold text-white text-[20px]">
-        Pools Owned:
-      </div>
-      <div className="text-white">
-        <Pools userPools={userPools} />
-      </div>
-      {open ? (
-        <div
-          className="relative z-10"
-          aria-labelledby="modal-title"
-          role="dialog"
-          aria-modal="true"
-        >
-          <div className="fixed inset-0 bg-stone-950 bg-opacity-[80%] transition-opacity"></div>
+    <>
+      {loading ? (
+        <div className="flex justify-center mt-[250px] mb-10">
+          <img
+            src="https://www.friend.tech/friendtechlogo.png"
+            alt=""
+            className="w-20 h-20 animate-bounce"
+          />
+        </div>
+      ) : (
+        <div className="">
+          <div className="text-[30px] text-center p-5  flex justify-center">
+            <img
+              src="https://ivory-accurate-pig-375.mypinata.cloud/ipfs/QmNfe9547vPVgd8qqdCFeH81yHos1n1CoQZu1D9n5Nrjvp?pinataGatewayToken=DdSIfjJJunjBBaGpRA4VE7rw9Q3bNil3avaM8VrHQkPRh_2vaSMuwGFYGbn9Xzt2"
+              alt=""
+              style={{ maxWidth: "80%" }}
+            />
+          </div>
+          <div className="text-center font-mono font-bold text-white text-[20px]">
+            Shares Owned:
+          </div>
+          <center className="mt-10 mb-10">
+            <Balances
+              setter={setSelectedShare}
+              setOpen={setOpen}
+              info={setShareInfo}
+            />
+          </center>
+          <div className="text-center font-mono font-bold text-white text-[20px]">
+            Pools Owned:
+          </div>
+          <div className="text-white">
+            {userPools || userPools !== null ? (
+              <Pools userPools={userPools} />
+            ) : (
+              <div className="flex justify-center gap-2 mt-2">
+                <img
+                  src="https://forums.frontier.co.uk/attachments/1000012145-png.391294/"
+                  alt=""
+                  className="w-7 h-7"
+                />
+                <h3 className="text-white font-mono font-bold text-[10px] mt-2">
+                  You currently own no pools
+                </h3>
+              </div>
+            )}
+          </div>
+          {open ? (
+            <div
+              className="relative z-10"
+              aria-labelledby="modal-title"
+              role="dialog"
+              aria-modal="true"
+            >
+              <div className="fixed inset-0 bg-stone-950 bg-opacity-[80%] transition-opacity"></div>
 
-          <div className="fixed inset-0 z-10 w-screen overflow-y-auto flex justify-center mb-12">
-            <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0 w-[380px]">
-              <div className="relative transform overflow-hidden rounded-lg bg-stone-900 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
-                <div className="px-4 pb-4 pt-5 sm:p-6 sm:pb-4 bg-stone-900">
-                  <div className="sm:flex sm:items-start">
-                    <div className="mt-2 bg-stone-900">
-                      <div className="flex justify-start gap-2">
-                        <img
-                          src="https://avatars.githubusercontent.com/u/94413972?s=280&v=4"
-                          alt=""
-                          className="w-10 h-10 mb-3"
-                        />{" "}
-                        <img
-                          src={selectedShare?.ftPfpUrl}
-                          alt=""
-                          className="w-10 h-10 mb-3 rounded-full"
-                        />
+              <div className="fixed inset-0 z-10 w-screen overflow-y-auto flex justify-center mb-12">
+                <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0 w-[380px]">
+                  <div className="relative transform overflow-hidden rounded-lg bg-stone-900 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                    <div className="px-4 pb-4 pt-5 sm:p-6 sm:pb-4 bg-stone-900">
+                      <div className="sm:flex sm:items-start">
+                        <div className="mt-2 bg-stone-900">
+                          <div className="flex justify-start gap-2">
+                            <img
+                              src="https://avatars.githubusercontent.com/u/94413972?s=280&v=4"
+                              alt=""
+                              className="w-10 h-10 mb-3"
+                            />{" "}
+                            <img
+                              src={selectedShare?.ftPfpUrl}
+                              alt=""
+                              className="w-10 h-10 mb-3 rounded-full"
+                            />
+                          </div>
+                          <h3
+                            className="text-base font-semibold leading-6 text-white"
+                            id="modal-title"
+                          >
+                            Create a pool for {selectedShare?.ftName}
+                          </h3>
+                          <div className="flex justify-start mt-3">
+                            <h3 className="text-white text-[10px] font-mono font-bold">
+                              Friend.Tech Profile
+                            </h3>
+                            <img
+                              src="https://freepngimg.com/thumb/twitter/108250-badge-twitter-verified-download-free-image-thumb.png"
+                              alt=""
+                              className="w-5 h-5"
+                            />
+                          </div>
+                          <div>
+                            <h3 className="text-white font-mono font-bold text-[10px] mb-3">
+                              Ca: {selectedShare?.address}
+                            </h3>
+                          </div>
+                          <div className="mt-2">
+                            <h3 className="text-white text-[12px]">
+                              Paired $OOOooo
+                            </h3>
+                            <input
+                              type="text"
+                              className="w-[300px] bg-stone-700 rounded-lg text-white text-[11.5px] p-0.5"
+                              onChange={(e) => {
+                                setInput(e.target.value);
+                              }}
+                              placeholder="Enter $OOOooo Amount..."
+                            />
+                            <div className="flex justify-end">
+                              <h3 className="text-white text-[8px] me-2">
+                                $OOOooo balance: {goddogBalance}
+                              </h3>
+                            </div>
+                            <div className="flex justify-center text-[20px] text-stone-300 mt-3">
+                              +
+                            </div>
+                            <h3 className="text-white text-[12px] mt-2">
+                              Paired share
+                            </h3>
+
+                            <input
+                              type="text"
+                              className="w-[300px] bg-stone-700 rounded-lg text-stone-300 text-[11.5px] p-0.5"
+                              placeholder="Enter Share Amount..."
+                              onChange={(e) => {
+                                setShareAmount(e.target.value);
+                              }}
+                            />
+                            <div className="flex justify-end">
+                              <h3 className="text-white text-[8px] me-2">
+                                Share balance: {shareInfo?.balance}
+                              </h3>
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                      <h3
-                        className="text-base font-semibold leading-6 text-white"
-                        id="modal-title"
+                    </div>
+                    <div className="grid grid-rows-2 flex justify-center gap-10 ">
+                      <div>
+                        <div className="grid grid-cols-2 gap-10">
+                          <div>
+                            <h3 className="text-white text-[8px]">
+                              Spot Price
+                            </h3>
+                            <input
+                              type="text"
+                              className="w-[100px] bg-stone-700 rounded-lg text-white text-[8px] p-0.5"
+                              onChange={(e) => {
+                                setSpotPrice(e.target.value);
+                              }}
+                            />
+                          </div>
+                          <div>
+                            <h3 className="text-white text-[8px]">Fee</h3>
+                            <input
+                              type="text"
+                              className="w-[100px] bg-stone-700 rounded-lg text-white text-[8px] p-0.5"
+                              onChange={(e) => {
+                                setFee(e.target.value);
+                              }}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6 bg-stone-900">
+                      <button
+                        type="button"
+                        className="inline-flex w-full justify-center rounded-md bg-stone-700 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 sm:ml-3 sm:w-auto"
+                        onClick={() => {
+                          createPool();
+                        }}
                       >
-                        Create a pool for {selectedShare?.ftName}
-                      </h3>
-                      <div className="flex justify-start mt-3">
-                        <h3 className="text-white text-[10px] font-mono font-bold">
-                          Friend.Tech Profile
-                        </h3>
-                        <img
-                          src="https://freepngimg.com/thumb/twitter/108250-badge-twitter-verified-download-free-image-thumb.png"
-                          alt=""
-                          className="w-5 h-5"
-                        />
-                      </div>
-                      <div>
-                        <h3 className="text-white font-mono font-bold text-[10px] mb-3">
-                          Ca: {selectedShare?.address}
-                        </h3>
-                      </div>
-                      <div className="mt-2">
-                        <h3 className="text-white text-[12px]">
-                          Paired $OOOooo
-                        </h3>
-                        <input
-                          type="text"
-                          className="w-[300px] bg-stone-700 rounded-lg text-white text-[11.5px] p-0.5"
-                          onChange={(e) => {
-                            setInput(e.target.value);
-                          }}
-                          placeholder="Enter $OOOooo Amount..."
-                        />
-                        <div className="flex justify-end">
-                          <h3 className="text-white text-[8px] me-2">
-                            $OOOooo balance: {goddogBalance}
-                          </h3>
-                        </div>
-                        <div className="flex justify-center text-[20px] text-stone-300 mt-3">
-                          +
-                        </div>
-                        <h3 className="text-white text-[12px] mt-2">
-                          Paired share
-                        </h3>
-
-                        <input
-                          type="text"
-                          className="w-[300px] bg-stone-700 rounded-lg text-stone-300 text-[11.5px] p-0.5"
-                          placeholder="Enter Share Amount..."
-                          onChange={(e) => {
-                            setShareAmount(e.target.value);
-                          }}
-                        />
-                        <div className="flex justify-end">
-                          <h3 className="text-white text-[8px] me-2">
-                            Share balance: {shareInfo?.balance}
-                          </h3>
-                        </div>
-                      </div>
+                        Create Pool
+                      </button>
+                      <button
+                        type="button"
+                        className="mt-3 inline-flex w-full justify-center rounded-md bg-red-500 px-3 py-2 text-sm font-semibold text-gray-900 border border-slate-500  hover:bg-gray-50 sm:mt-0 sm:w-auto"
+                        onClick={() => {
+                          setOpen(false);
+                        }}
+                      >
+                        Cancel
+                      </button>
                     </div>
                   </div>
-                </div>
-                <div className="grid grid-rows-2 flex justify-center gap-10 ">
-                  <div>
-                    <div className="grid grid-cols-2 gap-10">
-                      <div>
-                        <h3 className="text-white text-[8px]">Spot Price</h3>
-                        <input
-                          type="text"
-                          className="w-[100px] bg-stone-700 rounded-lg text-white text-[8px] p-0.5"
-                          onChange={(e) => {
-                            setSpotPrice(e.target.value);
-                          }}
-                        />
-                      </div>
-                      <div>
-                        <h3 className="text-white text-[8px]">Fee</h3>
-                        <input
-                          type="text"
-                          className="w-[100px] bg-stone-700 rounded-lg text-white text-[8px] p-0.5"
-                          onChange={(e) => {
-                            setFee(e.target.value);
-                          }}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6 bg-stone-900">
-                  <button
-                    type="button"
-                    className="inline-flex w-full justify-center rounded-md bg-stone-700 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 sm:ml-3 sm:w-auto"
-                    onClick={() => {
-                      createPool();
-                    }}
-                  >
-                    Create Pool
-                  </button>
-                  <button
-                    type="button"
-                    className="mt-3 inline-flex w-full justify-center rounded-md bg-red-500 px-3 py-2 text-sm font-semibold text-gray-900 border border-slate-500  hover:bg-gray-50 sm:mt-0 sm:w-auto"
-                    onClick={() => {
-                      setOpen(false);
-                    }}
-                  >
-                    Cancel
-                  </button>
                 </div>
               </div>
             </div>
-          </div>
+          ) : null}
         </div>
-      ) : null}
-    </div>
+      )}
+    </>
   );
 }
 

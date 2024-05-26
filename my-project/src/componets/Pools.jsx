@@ -4,10 +4,14 @@ import friendTechABI from "../abi/FriendTechABi";
 import { config } from "../config";
 import { ethers } from "ethers";
 import { Contract } from "ethers";
-
+import { findId } from "../requests/friendCalls";
 import { uintFormat } from "../formatters/format";
 import { useWallets } from "@privy-io/react-auth";
 import SudoSwapABI from "../abi/SudoSwapABI";
+import { useBalance } from "wagmi";
+import { base } from "wagmi/chains";
+import GodDogABI from "../abi/GodDogABI";
+import SudoSwapPoolABI from "../abi/SudoSwapPoolABI";
 import {
   Menu,
   MenuButton,
@@ -22,17 +26,59 @@ import {
   Square2StackIcon,
   TrashIcon,
 } from "@heroicons/react/16/solid";
+import { parseEther } from "viem";
 
 function Pools(props) {
   const [poolData, setPoolData] = useState([]);
   const friendWrapperContract = "0xbeea45F16D512a01f7E2a3785458D4a7089c8514";
+  const goddogContract = "0xddf7d080c82b8048baae54e376a3406572429b4e";
   const { userPools } = props;
+  console.log(userPools);
   const { wallets } = useWallets();
   const w0 = wallets[0];
   const [newOwner, setNewOwner] = useState(null);
+  const [currentShareBalance, setCurrentShareBalance] = useState(null);
+  const [sharesToDeposit, setSharesToDeposit] = useState(null);
+  const [goddogToDeposit, setGoddogToDeposit] = useState(null);
+  const [sharesToWithdraw, setSharesToWithdraw] = useState(null);
+  const [goddogToWithdraw, setGoddogToWithdraw] = useState(null);
+  const goddogBalanceResult = useBalance({
+    address: w0?.address,
+    token: "0xDDf7d080C82b8048BAAe54e376a3406572429b4e",
+    chainId: base.id,
+  });
+
+  const goddogBalance = Number(goddogBalanceResult?.data?.value) / 10 ** 18;
+  console.log(goddogBalance.toFixed(2));
   useEffect(() => {
     getSharesData();
   }, [userPools]);
+
+  async function getShareBalance(targetShareId) {
+    let balanceFound = false;
+    const userShareBalance = await findId(w0?.address);
+    for (const key in userShareBalance) {
+      if (userShareBalance[key].identifier === targetShareId) {
+        balanceFound = true;
+      }
+    }
+    if (balanceFound) {
+      getBalanceOfShare(targetShareId);
+    }
+  }
+
+  async function getBalanceOfShare(targetId) {
+    console.log(targetId);
+    const balanceResult = readContract(config, {
+      address: friendWrapperContract,
+      abi: friendTechABI,
+      functionName: "balanceOf",
+      args: [w0?.address, targetId],
+    });
+    const balanceFound = await balanceResult;
+    console.log(String(Number(balanceFound)));
+    setCurrentShareBalance(String(Number(balanceFound)));
+  }
 
   async function getSharesData() {
     const poolsFullData = [];
@@ -83,24 +129,33 @@ function Pools(props) {
     }
   }
 
-  async function transferOwnership() {
+  //to withdraw all from pool (tokens, and nfts) do this
+  //call the pool address call the multicall function
+  //pass in these parameters: ()
+  async function withdrawAll() {}
+
+  async function transferOwnership(targetPool) {
     const provider = await w0?.getEthersProvider();
-    const network = await provider.getNetwork();
     const signer = await provider?.getSigner();
-    const SudoSwapContract = new Contract(
-      "0x605145D263482684590f630E9e581B21E4938eb8",
-      SudoSwapABI,
+    const SudoSwapPoolContract = new Contract(
+      targetPool,
+      SudoSwapPoolABI,
       signer
     );
     try {
-      const res = await SudoSwapContract.transferOwnership(newOwner);
+      const res = await SudoSwapPoolContract.transferOwnership(newOwner, "0x", {
+        value: parseEther("0.000004"),
+      });
       const reciept = await res.wait();
       console.log(await reciept);
     } catch (error) {
       console.log(error);
     }
   }
-  async function depositGoddog() {
+
+  //depositing goddog works perfectly
+  async function depositGoddog(targetPool) {
+    await approveGoddog();
     const provider = await w0?.getEthersProvider();
     const network = await provider.getNetwork();
     const signer = await provider?.getSigner();
@@ -111,11 +166,66 @@ function Pools(props) {
     );
     try {
       console.log("running");
+      const res = await SudoSwapContract.depositERC20(
+        goddogContract,
+        targetPool,
+        ethers.BigNumber.from(goddogToDeposit)
+          .mul(ethers.BigNumber.from("10").pow(18))
+          .toString()
+      );
+      const reciept = await res.wait();
+      console.log(await reciept);
     } catch (error) {
       console.log(error);
     }
   }
-  async function depositSpecificShares() {
+
+  async function approveGoddog() {
+    const provider = await w0?.getEthersProvider();
+    const signer = await provider?.getSigner();
+    const goddogContractInstance = new Contract(
+      goddogContract,
+      GodDogABI,
+      signer
+    );
+    try {
+      console.log("running");
+      const res = await goddogContractInstance.approve(
+        "0x605145D263482684590f630E9e581B21E4938eb8",
+        "99999999999999999999999999999999"
+      );
+
+      const reciept = await res.wait();
+      console.log(await reciept);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async function approveShareSpending() {
+    const provider = await w0?.getEthersProvider();
+    const signer = await provider?.getSigner();
+    const friendTechWrapperContract = new Contract(
+      friendWrapperContract,
+      friendTechABI,
+      signer
+    );
+    try {
+      console.log("running");
+      const res = await friendTechWrapperContract.setApprovalForAll(
+        "0x605145D263482684590f630E9e581B21E4938eb8",
+        true
+      );
+      const reciept = await res.wait();
+      console.log(await reciept);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  //deposit works perfectly
+  async function depositSpecificShares(targetId, targetPool) {
+    await approveShareSpending();
     const provider = await w0?.getEthersProvider();
     const network = await provider.getNetwork();
     const signer = await provider?.getSigner();
@@ -124,14 +234,68 @@ function Pools(props) {
       SudoSwapABI,
       signer
     );
+    console.log(sharesToDeposit);
     try {
+      console.log("running");
+      const res = await SudoSwapContract.depositERC1155(
+        friendWrapperContract,
+        targetId,
+        targetPool,
+        sharesToDeposit
+      );
+      const reciept = await res.wait();
+      console.log(await reciept);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  //works perfectly all we gotta do is get the current token balance of the pool
+  async function withdrawGoddog(targetPool) {
+    const provider = await w0?.getEthersProvider();
+    const signer = await provider?.getSigner();
+    const SudoSwapPoolContract = new Contract(
+      targetPool,
+      SudoSwapPoolABI,
+      signer
+    );
+    try {
+      console.log("running");
+      const res = await SudoSwapPoolContract.withdrawERC20(
+        goddogContract,
+        ethers.BigNumber.from(goddogToWithdraw)
+          .mul(ethers.BigNumber.from("10").pow(18))
+          .toString()
+      );
+      const reciept = await res.wait();
+      console.log(await reciept);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async function withdrawSpecificShares(targetId, targetPool) {
+    const provider = await w0?.getEthersProvider();
+    const signer = await provider?.getSigner();
+    const SudoSwapPoolContract = new Contract(
+      targetPool,
+      SudoSwapPoolABI,
+      signer
+    );
+    try {
+      const res = await SudoSwapPoolContract.withdrawERC1155(
+        friendWrapperContract,
+        [targetId],
+        [sharesToWithdraw]
+      );
+      const reciept = await res.wait();
+      console.log(await reciept);
       console.log("running");
     } catch (error) {
       console.log(error);
     }
   }
-  async function withdrawGoddog() {}
-  async function withdrawSpecificShares() {}
+
+  //add bonding curve typew in pool card
   //the specific pool contract in the read section we can get buy and sell price
   //function to deposit shares in the sudoswap contract (0x605145D263482684590f630E9e581B21E4938eb8)  : depositERC1155(address nft (the friend tech wrapper contract goes here),uint256 id,address recipient(recipient is the pools address we want to deposit to)  ,uint256 amount (number of shares to deposit))  P.S. we have to ask for approval to spend nft and goddog before doing these deposits
   //function to deposit goddog tokens in the sudoswap contract (0x605145D263482684590f630E9e581B21E4938eb8) : depositERC20(goddogContract, recipient (recipient is the pool address we want to deposit to), amount of tokens to deposit) P.S. we have to ask for approval to spend nft and goddog before doing these deposits
@@ -182,9 +346,23 @@ function Pools(props) {
                       ).toFixed(2)}
                     </h3>
                   </div>
+                  <div className="text-white text-[10px] mt-2 font-mono font-bold">
+                    Bonding Curve:{" "}
+                    {item?.poolData?.sharePoolData?.bondingCurveAddress ===
+                    "0x9506c0e5cee9ad1dee65b3539268d61ccb25afb6"
+                      ? "XYK"
+                      : null}
+                  </div>
                   <div className="mt-3 flex justify-start text-[8px] gap-2">
                     <Menu>
-                      <MenuButton className="border text-center p-1 bg-black rounded-xl border-slate-500 ">
+                      <MenuButton
+                        className="border text-center p-1 bg-black rounded-xl border-slate-500 "
+                        onClick={() => {
+                          getShareBalance(
+                            item?.poolData?.sharePoolData?.erc1155Id
+                          );
+                        }}
+                      >
                         Deposit Shares
                       </MenuButton>
                       <MenuItems anchor="top" className={"w-[170px]"}>
@@ -204,15 +382,28 @@ function Pools(props) {
                                   //this prevents from th emenu closing automatically when the user clicks th einput element
                                   e.stopPropagation();
                                 }}
+                                onChange={(e) => {
+                                  console.log(e.target.value);
+                                  setSharesToDeposit(e.target.value);
+                                }}
                               />
                               <div className="flex justify-end">
                                 <h3 className="text-white text-[7px]">
-                                  Share Balance:
+                                  Share Balance: {currentShareBalance}
                                 </h3>
                               </div>
                             </div>
                             <div className="mt-3 flex justify-center mb-3">
-                              <button className="border text-center p-1 bg-black rounded-lg border-slate-500 text-[10px]">
+                              <button
+                                className="border text-center p-1 bg-black rounded-lg border-slate-500 text-[10px]"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  depositSpecificShares(
+                                    item?.poolData?.sharePoolData?.erc1155Id,
+                                    item?.poolData?.sharePoolData?.address
+                                  );
+                                }}
+                              >
                                 Deposit Shares
                               </button>
                             </div>
@@ -241,15 +432,27 @@ function Pools(props) {
                                   //this prevents from th emenu closing automatically when the user clicks th einput element
                                   e.stopPropagation();
                                 }}
+                                onChange={(e) => {
+                                  console.log(e.target.value);
+                                  setGoddogToDeposit(e.target.value);
+                                }}
                               />
                               <div className="flex justify-end">
-                                <h3 className="text-white text-[7px]">
-                                  $OOOooo Balance:
+                                <h3 className="text-white text-[6px]">
+                                  $OOOooo Balance: {goddogBalance}
                                 </h3>
                               </div>
                             </div>
                             <div className="mt-3 flex justify-center mb-3">
-                              <button className="border text-center p-1 bg-black rounded-lg border-slate-500 text-[10px]">
+                              <button
+                                className="border text-center p-1 bg-black rounded-lg border-slate-500 text-[10px]"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  depositGoddog(
+                                    item?.poolData?.sharePoolData?.address
+                                  );
+                                }}
+                              >
                                 Deposit Goddog
                               </button>
                             </div>
@@ -278,15 +481,31 @@ function Pools(props) {
                                   //this prevents from th emenu closing automatically when the user clicks th einput element
                                   e.stopPropagation();
                                 }}
+                                onChange={(e) => {
+                                  console.log(e.target.value);
+                                  setSharesToWithdraw(e.target.value);
+                                }}
                               />
                               <div className="flex justify-end">
                                 <h3 className="text-white text-[7px]">
-                                  Pool Share Balance:
+                                  Pool Share Balance:{" "}
+                                  {Number(
+                                    item?.poolData?.sharePoolData?.nftBalance
+                                  )}
                                 </h3>
                               </div>
                             </div>
                             <div className="mt-3 flex justify-center mb-3">
-                              <button className="border text-center p-1 bg-black rounded-lg border-slate-500 text-[10px]">
+                              <button
+                                className="border text-center p-1 bg-black rounded-lg border-slate-500 text-[10px]"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  withdrawSpecificShares(
+                                    item?.poolData?.sharePoolData?.erc1155Id,
+                                    item?.poolData?.sharePoolData?.address
+                                  );
+                                }}
+                              >
                                 Withdraw Shares
                               </button>
                             </div>
@@ -314,6 +533,10 @@ function Pools(props) {
                                   //this prevents from th emenu closing automatically when the user clicks th einput element
                                   e.stopPropagation();
                                 }}
+                                onChange={(e) => {
+                                  console.log(e.target.value);
+                                  setGoddogToWithdraw(e.target.value);
+                                }}
                               />
                               <div className="flex justify-end">
                                 <h3 className="text-white text-[7px]">
@@ -322,7 +545,15 @@ function Pools(props) {
                               </div>
                             </div>
                             <div className="mt-3 flex justify-center mb-3">
-                              <button className="border text-center p-1 bg-black rounded-lg border-slate-500 text-[10px]">
+                              <button
+                                className="border text-center p-1 bg-black rounded-lg border-slate-500 text-[10px]"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  withdrawGoddog(
+                                    item?.poolData?.sharePoolData?.address
+                                  );
+                                }}
+                              >
                                 Withdraw Goddog
                               </button>
                             </div>
@@ -331,7 +562,7 @@ function Pools(props) {
                       </MenuItems>
                     </Menu>
                   </div>
-                  <div className="mt-2 flex justify-center text-[10px]">
+                  <div className="mt-2 flex justify-center text-[10px] gap-2">
                     <Menu>
                       <MenuButton className="border text-center p-1 bg-black rounded-lg border-slate-500 ">
                         Transfer Ownership
@@ -352,10 +583,65 @@ function Pools(props) {
                                   //this prevents from th emenu closing automatically when the user clicks th einput element
                                   e.stopPropagation();
                                 }}
+                                onChange={(e) => {
+                                  console.log(e.target.value);
+                                  setNewOwner(e.target.value);
+                                }}
                               />
                             </div>
                             <div className="mt-3 flex justify-center mb-3">
-                              <button className="border text-center p-1 bg-black rounded-lg border-slate-500 text-[10px]">
+                              <button
+                                className="border text-center p-1 bg-black rounded-lg border-slate-500 text-[10px]"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  transferOwnership(
+                                    item?.poolData?.sharePoolData?.address
+                                  );
+                                }}
+                              >
+                                Transfer Ownership
+                              </button>
+                            </div>
+                          </div>
+                        </MenuItem>
+                      </MenuItems>
+                    </Menu>
+                    <Menu>
+                      <MenuButton className="border text-center p-1 bg-black rounded-lg border-slate-500 ">
+                        Withdraw All
+                      </MenuButton>
+                      <MenuItems anchor="top" className={"w-[170px]"}>
+                        <MenuItem className=" border border-slate-500 text-white bg-black rounded-lg ">
+                          <div>
+                            <div className="flex justify-start">
+                              <h3 className="text-[8px] text-white p-2">
+                                Transfer Pool Ownership
+                              </h3>
+                            </div>
+                            <div className="p-4">
+                              <input
+                                type="text"
+                                className="bg-stone-800 rounded-lg w-[135px] text-white text-[10px] p-0.5"
+                                onClick={(e) => {
+                                  //this prevents from th emenu closing automatically when the user clicks th einput element
+                                  e.stopPropagation();
+                                }}
+                                onChange={(e) => {
+                                  console.log(e.target.value);
+                                  setNewOwner(e.target.value);
+                                }}
+                              />
+                            </div>
+                            <div className="mt-3 flex justify-center mb-3">
+                              <button
+                                className="border text-center p-1 bg-black rounded-lg border-slate-500 text-[10px]"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  transferOwnership(
+                                    item?.poolData?.sharePoolData?.address
+                                  );
+                                }}
+                              >
                                 Transfer Ownership
                               </button>
                             </div>
@@ -369,18 +655,7 @@ function Pools(props) {
             );
           })}
         </>
-      ) : (
-        <div className="flex justify-center gap-2">
-          <img
-            src="https://forums.frontier.co.uk/attachments/1000012145-png.391294/"
-            alt=""
-            className="w-7 h-7"
-          />
-          <h3 className="text-white font-mono font-bold text-[10px] mt-2">
-            You currently own no pools
-          </h3>
-        </div>
-      )}
+      ) : null}
     </center>
   );
 }

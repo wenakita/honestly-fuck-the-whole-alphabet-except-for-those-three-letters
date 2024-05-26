@@ -2,22 +2,36 @@ import { useEffect, useState } from "react";
 import { SearchByContract, SearchByUser } from "../requests/friendCalls";
 import { uintFormat } from "../formatters/format";
 import { Link } from "react-router-dom";
+import { Quoter } from "sudo-defined-quoter";
+const API_KEY = import.meta.env.VITE_DEFINED_KEY;
+const friendWrapperContract = "0xbeea45F16D512a01f7E2a3785458D4a7089c8514";
+
 function SearchBar() {
   const [input, setInput] = useState("");
   const [activateResults, setActivateResults] = useState(false);
   const [caResults, setCaResults] = useState(null);
   const [userResults, setUserResults] = useState(null);
+  const [searchPools, setSearchPools] = useState(false);
+  const [searchUsers, setSearchUsers] = useState(false);
 
   const [resultType, setResultType] = useState("user");
   useEffect(() => {
-    if (input.includes("0x")) {
-      console.log("Search address");
-      setResultType("contract");
-      fetchContract();
-    } else {
-      console.log("Search user");
-      setResultType("user");
-      fetchUser();
+    getActivePools();
+  }, []);
+  useEffect(() => {
+    if (searchUsers) {
+      if (input.includes("0x")) {
+        console.log("Search address");
+        setResultType("contract");
+        fetchContract();
+      } else {
+        console.log("Search user");
+        setResultType("user");
+        fetchUser();
+      }
+    }
+    if (searchPools) {
+      console.log("hello");
     }
   }, [input]);
   async function fetchContract() {
@@ -28,6 +42,13 @@ function SearchBar() {
     } else {
       setCaResults(results);
     }
+  }
+
+  async function getActivePools() {
+    console.log("running");
+    let q = new Quoter(API_KEY, 8453);
+    const a = await q.getPoolsForCollection(friendWrapperContract);
+    console.log(a);
   }
 
   async function fetchUser() {
@@ -70,68 +91,50 @@ function SearchBar() {
 
       {activateResults ? (
         <div className="border absolute mt-7 w-[300px] bg-black border-slate-500 ms-5">
-          <div className=" flex justify-end text-white me-3">
-            <button
-              onClick={() => {
-                setActivateResults(false);
-                setCaResults(null);
-                setUserResults(null);
-              }}
-            >
-              X
-            </button>
+          <div className="flex justify-between">
+            <div className="flex justify-start gap-2 text-[12px] p-2">
+              <button
+                className="text-white"
+                onClick={() => {
+                  console.log("henlo");
+                  setSearchUsers(true);
+                  setSearchPools(false);
+                }}
+              >
+                Users
+              </button>
+              <button
+                className="text-white"
+                onClick={() => {
+                  console.log("henlo");
+                  setSearchUsers(false);
+                  setSearchPools(true);
+                }}
+              >
+                Pools
+              </button>
+            </div>
+            <div className=" flex justify-end text-white me-3">
+              <button
+                onClick={() => {
+                  setActivateResults(false);
+                  setCaResults(null);
+                  setUserResults(null);
+                }}
+              >
+                X
+              </button>
+            </div>
           </div>
-          {resultType === "contract" ? (
+          {searchUsers ? (
             <>
-              {caResults !== null ? (
-                <div className="border border-slate-500  text-white text-center">
-                  <Link
-                    to={`/friend/${caResults?.address}`}
-                    className="border border-slate-500 p-3 grid grid-cols-3"
-                    onClick={() => {
-                      setActivateResults(false);
-                    }}
-                  >
-                    <div>
-                      <div className="flex justify-start gap-2">
-                        <img
-                          src={caResults?.ftPfpUrl}
-                          alt=""
-                          className="w-5 h-5 rounded-full"
-                        />
-                        <h3 className="text-whit text-[10px]">
-                          {caResults?.ftName}
-                        </h3>
-                      </div>
-                    </div>
-                    <div>
-                      <h3 className="text-white text-[10px]">
-                        {uintFormat(caResults?.displayPrice)}
-                      </h3>
-                    </div>
-                    <div>
-                      <h3 className="text-white text-[10px]">
-                        Holders: {caResults?.holderCount}
-                      </h3>
-                    </div>
-                  </Link>
-                </div>
-              ) : (
-                <div className="border border-slate-500  text-white text-center">
-                  No contracts found
-                </div>
-              )}
-            </>
-          ) : (
-            <div className="overflow-auto h-[200px]">
-              {userResults !== null ? (
-                <div className="border border-slate-500 text-white text-center">
-                  {userResults.map((item) => {
-                    return (
+              {resultType === "contract" ? (
+                <>
+                  {caResults !== null ? (
+                    <div className="border border-slate-500  text-white text-center">
                       <Link
-                        to={`friend/${item?.address}`}
-                        className="border border-slate-500 p-3 grid grid-cols-3 text-white"
-                        key={item}
+                        to={`/friend/${caResults?.address}`}
+                        className="border border-slate-500 p-3 grid grid-cols-3"
                         onClick={() => {
                           setActivateResults(false);
                         }}
@@ -139,36 +142,82 @@ function SearchBar() {
                         <div>
                           <div className="flex justify-start gap-2">
                             <img
-                              src={item?.ftPfpUrl}
+                              src={caResults?.ftPfpUrl}
                               alt=""
                               className="w-5 h-5 rounded-full"
                             />
-                            <h3 className="text-[10px]">{item?.ftName}</h3>
-                          </div>
-                        </div>
-                        <div>
-                          <h3 className="text-[10px] text-white">
-                            {uintFormat(item?.displayPrice)}
-                          </h3>
-                        </div>
-                        <div>
-                          <div className="flex justify-end">
-                            <h3 className="text-white text-[10px]">
-                              Holders: {item?.holderCount}
+                            <h3 className="text-whit text-[10px]">
+                              {caResults?.ftName}
                             </h3>
                           </div>
                         </div>
+                        <div>
+                          <h3 className="text-white text-[10px]">
+                            {uintFormat(caResults?.displayPrice)}
+                          </h3>
+                        </div>
+                        <div>
+                          <h3 className="text-white text-[10px]">
+                            Holders: {caResults?.holderCount}
+                          </h3>
+                        </div>
                       </Link>
-                    );
-                  })}
-                </div>
+                    </div>
+                  ) : (
+                    <div className="border border-slate-500  text-white text-center">
+                      No contracts found
+                    </div>
+                  )}
+                </>
               ) : (
-                <div className="border border-slate-500 text-white text-center">
-                  no users found
+                <div className="overflow-auto h-[200px]">
+                  {userResults !== null ? (
+                    <div className="border border-slate-500 text-white text-center">
+                      {userResults.map((item) => {
+                        return (
+                          <Link
+                            to={`friend/${item?.address}`}
+                            className="border border-slate-500 p-3 grid grid-cols-3 text-white"
+                            key={item}
+                            onClick={() => {
+                              setActivateResults(false);
+                            }}
+                          >
+                            <div>
+                              <div className="flex justify-start gap-2">
+                                <img
+                                  src={item?.ftPfpUrl}
+                                  alt=""
+                                  className="w-5 h-5 rounded-full"
+                                />
+                                <h3 className="text-[10px]">{item?.ftName}</h3>
+                              </div>
+                            </div>
+                            <div>
+                              <h3 className="text-[10px] text-white">
+                                {uintFormat(item?.displayPrice)}
+                              </h3>
+                            </div>
+                            <div>
+                              <div className="flex justify-end">
+                                <h3 className="text-white text-[10px]">
+                                  Holders: {item?.holderCount}
+                                </h3>
+                              </div>
+                            </div>
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <div className="border border-slate-500 text-white text-center">
+                      no users found
+                    </div>
+                  )}
                 </div>
               )}
-            </div>
-          )}
+            </>
+          ) : null}
         </div>
       ) : null}
     </div>
