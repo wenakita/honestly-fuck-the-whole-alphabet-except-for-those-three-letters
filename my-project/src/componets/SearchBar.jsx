@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import { SearchByContract, SearchByUser } from "../requests/friendCalls";
 import { uintFormat } from "../formatters/format";
+import { readContract } from "@wagmi/core";
+import { config } from "../config";
 import { Link } from "react-router-dom";
 import { Quoter } from "sudo-defined-quoter";
+import friendTechABI from "../abi/FriendTechABi";
 const API_KEY = import.meta.env.VITE_DEFINED_KEY;
 const friendWrapperContract = "0xbeea45F16D512a01f7E2a3785458D4a7089c8514";
 
@@ -13,6 +16,8 @@ function SearchBar() {
   const [userResults, setUserResults] = useState(null);
   const [searchPools, setSearchPools] = useState(false);
   const [searchUsers, setSearchUsers] = useState(false);
+  const [poolsData, setPoolsData] = useState(null);
+  const [matchingPools, setMatchingPools] = useState(null);
 
   const [resultType, setResultType] = useState("user");
   useEffect(() => {
@@ -31,9 +36,32 @@ function SearchBar() {
       }
     }
     if (searchPools) {
-      console.log("hello");
+      if (input.length > 0) {
+        console.log("hello");
+        searchPoolsData();
+      } else {
+        setMatchingPools(null);
+      }
     }
   }, [input]);
+
+  async function searchPoolsData() {
+    const matchingResults = [];
+    if (poolsData !== null) {
+      for (const key in poolsData) {
+        const currentPoolData = poolsData[key];
+        const currentName =
+          poolsData[key]?.friendTechData?.ftName.toLowerCase();
+        console.log(poolsData[key]?.friendTechData?.ftName);
+        console.log(currentPoolData);
+        if (currentName.includes(input)) {
+          matchingResults.push(poolsData[key]);
+        }
+      }
+    }
+    setMatchingPools(matchingResults);
+  }
+
   async function fetchContract() {
     const results = await SearchByContract(input);
     console.log(results);
@@ -45,10 +73,53 @@ function SearchBar() {
   }
 
   async function getActivePools() {
+    let formattedPoolsData = [];
     console.log("running");
     let q = new Quoter(API_KEY, 8453);
     const a = await q.getPoolsForCollection(friendWrapperContract);
     console.log(a);
+    for (const key in a) {
+      const currentId = a[key].erc1155Id;
+      const currentShareContract = await getShareUri(currentId);
+      const shareData = await getPoolShareData(currentShareContract);
+      if (shareData !== null && !!shareData) {
+        console.log("true");
+        formattedPoolsData.push({
+          sudoSwapData: a[key],
+          friendTechData: shareData,
+        });
+      }
+    }
+    setPoolsData(formattedPoolsData);
+  }
+  async function getShareUri(targetId) {
+    console.log(targetId);
+    try {
+      const uriResult = await readContract(config, {
+        address: friendWrapperContract,
+        abi: friendTechABI,
+        functionName: "uri",
+        args: [targetId],
+      });
+      const contractResponse = uriResult.slice(28, uriResult.length);
+      console.log(contractResponse);
+      return contractResponse;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async function getPoolShareData(targetContract) {
+    console.log(targetContract);
+    try {
+      const res = await fetch(
+        `https://prod-api.kosetto.com/users/${targetContract}`
+      );
+
+      const data = await res.json();
+      return data;
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   async function fetchUser() {
@@ -98,7 +169,9 @@ function SearchBar() {
                 onClick={() => {
                   console.log("henlo");
                   setSearchUsers(true);
+
                   setSearchPools(false);
+                  setMatchingPools(null);
                 }}
               >
                 Users
@@ -108,6 +181,7 @@ function SearchBar() {
                 onClick={() => {
                   console.log("henlo");
                   setSearchUsers(false);
+
                   setSearchPools(true);
                 }}
               >
@@ -217,7 +291,57 @@ function SearchBar() {
                 </div>
               )}
             </>
-          ) : null}
+          ) : (
+            <div className="overflow-auto h-[200px]">
+              {searchPools && matchingPools !== null ? (
+                <>
+                  <div className="border border-slate-500 text-white text-center">
+                    {matchingPools.map((item) => {
+                      return (
+                        <Link
+                          key={item}
+                          to={`/pool/${item?.sudoSwapData?.erc1155Id}`}
+                          className="border border-slate-500 p-3 grid grid-cols-3 text-white text-[10px]"
+                          onClick={() => {
+                            setActivateResults(false);
+                          }}
+                        >
+                          <div className="flex justify-start gap-2">
+                            <img
+                              src={item?.friendTechData?.ftPfpUrl}
+                              alt=""
+                              className="w-5 h-5 rounded-full"
+                            />
+                            <h3 className="text-[10px]">
+                              {item?.friendTechData?.ftName}
+                            </h3>
+                          </div>
+                          <div className="flex justify-center text-white gap-2 text-[10px]">
+                            LP: {uintFormat(item?.sudoSwapData?.spotPrice)}
+                            <img
+                              src="https://dd.dexscreener.com/ds-data/tokens/base/0xddf7d080c82b8048baae54e376a3406572429b4e.png?size=lg&key=18ea46"
+                              alt=""
+                              className="w-4 h-4 rounded-full"
+                            />
+                          </div>
+                          <div className="flex justify-end">
+                            Pool Fee: %{" "}
+                            {Number(
+                              uintFormat(item?.sudoSwapData?.fee) * 100
+                            ).toFixed(2)}
+                          </div>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </>
+              ) : (
+                <div className="border border-slate-500 text-white text-center">
+                  no users found
+                </div>
+              )}
+            </div>
+          )}
         </div>
       ) : null}
     </div>

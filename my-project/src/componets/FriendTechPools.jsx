@@ -377,17 +377,7 @@ function FriendTechPools() {
           style={{ maxWidth: "80%" }}
         />
       </div>
-      <div className="flex justify-end me-5 mb-5">
-        <button className="border text-center p-1 bg-black rounded-xl border-slate-500 text-white text-[12px]">
-          Filter Pools
-        </button>
-        <div className="border absolute mt-[30px] w-[250px] bg-black border-slate-500 rounded-md p-2">
-          <h3 className="text-white text-[10px]">Filter Pools</h3>
-          <div className="mt-4">
-            <input type="text" className="bg-stone-900 w-[230px] rounded-lg" />
-          </div>
-        </div>
-      </div>
+
       <div className="flex justify-center gap-2">
         <div className=" text-white text-center font-mono font-bold">
           Friend.Tech Share Trading Pools :
@@ -415,7 +405,7 @@ function FriendTechPools() {
                   return (
                     <div
                       key={item}
-                      className="border border-slate-500 p-2 w-[320px] rounded-xl"
+                      className="border border-slate-500 p-2 w-[320px] rounded-xl mt-2"
                     >
                       <div className="p-2">
                         <div>
