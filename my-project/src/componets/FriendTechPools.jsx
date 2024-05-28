@@ -249,7 +249,7 @@ function FriendTechPools() {
         false,
       ];
       const res = await sudoSwapContract.swap(parameters, {
-        gasLimit: 200000,
+        gasLimit: 250000,
       });
       const reciept = await res.wait();
       console.log(await reciept);
