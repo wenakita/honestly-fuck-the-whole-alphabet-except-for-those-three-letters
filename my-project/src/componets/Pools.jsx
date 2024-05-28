@@ -33,7 +33,8 @@ function Pools(props) {
   const [poolData, setPoolData] = useState([]);
   const friendWrapperContract = "0xbeea45F16D512a01f7E2a3785458D4a7089c8514";
   const goddogContract = "0xddf7d080c82b8048baae54e376a3406572429b4e";
-  const { userPools } = props;
+  const { userPools, activateLoading } = props;
+
   console.log(userPools);
   const { wallets } = useWallets();
   const w0 = wallets[0];
@@ -153,6 +154,7 @@ function Pools(props) {
       });
       const reciept = await res.wait();
       console.log(await reciept);
+      activateLoading();
     } catch (error) {
       console.log(error);
     }
@@ -250,6 +252,9 @@ function Pools(props) {
       );
       const reciept = await res.wait();
       console.log(await reciept);
+
+      activateLoading();
+      getSharesData();
     } catch (error) {
       console.log(error);
     }
@@ -274,6 +279,8 @@ function Pools(props) {
       );
       const reciept = await res.wait();
       console.log(await reciept);
+      activateLoading();
+      getSharesData();
     } catch (error) {
       console.log(error);
     }
@@ -295,6 +302,8 @@ function Pools(props) {
       const reciept = await res.wait();
       console.log(await reciept);
       console.log("running");
+      activateLoading();
+      getSharesData();
     } catch (error) {
       console.log(error);
     }

@@ -39,6 +39,7 @@ function FriendTechPools() {
       setLoading(false);
     }, [2000]);
   }
+
   //before we buy the nft we have to call the getBuyNFTQuote function in pool contract
   //so tx only works after clicking second time because of use state when we storebuy and sell quotes so we are gonna have to find a way around this
 
@@ -375,7 +376,7 @@ function FriendTechPools() {
 
   const [availablePools, setAvailablePools] = useState(null);
   return (
-    <center>
+    <center className="mb-20">
       <div className="text-[30px] text-center p-5  flex justify-center">
         <img
           src="https://ivory-accurate-pig-375.mypinata.cloud/ipfs/QmNfe9547vPVgd8qqdCFeH81yHos1n1CoQZu1D9n5Nrjvp?pinataGatewayToken=DdSIfjJJunjBBaGpRA4VE7rw9Q3bNil3avaM8VrHQkPRh_2vaSMuwGFYGbn9Xzt2"

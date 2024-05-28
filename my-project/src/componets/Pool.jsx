@@ -303,7 +303,7 @@ function Pool() {
   }
 
   return (
-    <center className="mt-20">
+    <center className="mt-20 mb-20">
       {loading ? (
         <div className="flex justify-center mt-[250px] mb-10">
           <img

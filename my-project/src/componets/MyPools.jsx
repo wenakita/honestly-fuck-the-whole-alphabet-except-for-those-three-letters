@@ -51,6 +51,13 @@ function MyPools() {
   //   console.log(selectedShare);
   // }, [selectedShare]);
 
+  async function acitvateLoading() {
+    setLoading(true);
+
+    setTimeout(() => {
+      setLoading(false);
+    }, [2000]);
+  }
   async function addNetwork() {
     console.info("Adding network");
     const provider = await w0?.getEthersProvider();
@@ -182,6 +189,7 @@ function MyPools() {
       });
       const reciept = await res.wait();
       console.log(await reciept);
+      acitvateLoading();
     } catch (error) {
       console.log(error);
     }
@@ -189,7 +197,7 @@ function MyPools() {
   //it works lfg now find how to properly manage it
 
   return (
-    <>
+    <div className="mb-20">
       {loading ? (
         <div className="flex justify-center mt-[250px] mb-10">
           <img
@@ -222,7 +230,7 @@ function MyPools() {
           </div>
           <center className="text-white mt-10 ">
             {userPools || userPools !== null ? (
-              <Pools userPools={userPools} />
+              <Pools userPools={userPools} activateLoading={acitvateLoading} />
             ) : (
               <div className="flex justify-center gap-2 mt-2">
                 <img
@@ -380,7 +388,7 @@ function MyPools() {
           ) : null}
         </div>
       )}
-    </>
+    </div>
   );
 }
 
