@@ -19,7 +19,7 @@ function BalancesPage() {
   });
 
   return (
-    <>
+    <div className="mb-20">
       {loading ? (
         <div className="flex justify-center mt-[250px] mb-10">
           <img
@@ -58,12 +58,12 @@ function BalancesPage() {
           <h3 className="text-white text-center mt-10 font-mono font-bold mb-3">
             Your balances
           </h3>
-          <div className="mt-2 ">
+          <center className="mt-2 ">
             <Balances />
-          </div>
+          </center>
         </div>
       )}
-    </>
+    </div>
   );
 }
 

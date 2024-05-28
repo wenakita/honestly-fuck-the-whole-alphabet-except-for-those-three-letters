@@ -17,7 +17,7 @@ const friendWrapperContract = "0xbeea45F16D512a01f7E2a3785458D4a7089c8514";
 function Pool() {
   const [poolsFound, setPoolsFound] = useState(null);
   const [loading, setLoading] = useState(true);
-
+  const [displayPools, setDisplayPools] = useState(false);
   const params = useParams();
   const { wallets } = useWallets();
   const w0 = wallets[0];
@@ -64,6 +64,7 @@ function Pool() {
           friendTechData: friendTechData,
           userShareBalance: Number(userShareBalance),
         });
+        setDisplayPools(true);
       }
     }
     console.log(targetSharesPools);
@@ -314,84 +315,92 @@ function Pool() {
         </div>
       ) : (
         <>
-          {poolsFound ? (
-            <div className="">
+          {displayPools ? (
+            <>
               <h3 className="text-center text-white font-mono font-bold mt-5 text-[20px]">
                 Pools For {poolsFound[0]?.friendTechData?.ftName}:
               </h3>
-              {poolsFound.map((item) => {
-                return (
-                  <div key={item} className=" flex justify-center mt-3">
-                    <div className="border border-slate-500 p-2 w-[320px] rounded-xl bg-black">
-                      <div className="p-2">
-                        <div>
-                          <div className="flex justify-start text-white gap-2">
-                            <img
-                              src={item?.friendTechData?.ftPfpUrl}
-                              alt=""
-                              className="w-8 h-8 rounded-full"
-                            />
+              <div
+                className={
+                  displayPools
+                    ? `border border-slate-500 p-2 rounded-xl overflow-auto h-[500px] w-[410px] mt-10`
+                    : null
+                }
+              >
+                {poolsFound.map((item) => {
+                  return (
+                    <div key={item} className=" flex justify-center mt-3">
+                      <div className="border border-slate-500 p-2 w-[320px] rounded-xl bg-black">
+                        <div className="p-2">
+                          <div>
+                            <div className="flex justify-start text-white gap-2">
+                              <img
+                                src={item?.friendTechData?.ftPfpUrl}
+                                alt=""
+                                className="w-8 h-8 rounded-full"
+                              />
+                              <Link
+                                to={`/friend/${item?.friendTechData?.address}`}
+                                className="text-white text-[10px] mt-2 hover:underline"
+                              >
+                                {item?.friendTechData?.ftName}
+                              </Link>
+                            </div>
+                          </div>
+                          <div className="text-white text-[8px] mt-4 flex justify-start ms-2">
                             <Link
-                              to={`/friend/${item?.friendTechData?.address}`}
-                              className="text-white text-[10px] mt-2 hover:underline"
+                              to={`https://sudoswap.xyz/#/manage/base/${item?.sudoSwapData?.address}`}
+                              className="font-mono font-bold hover:underline hover:text-gray-300"
                             >
-                              {item?.friendTechData?.ftName}
+                              Pool Ca {item?.sudoSwapData?.address}
                             </Link>
                           </div>
-                        </div>
-                        <div className="text-white text-[8px] mt-4 flex justify-start ms-2">
-                          <Link
-                            to={`https://sudoswap.xyz/#/manage/base/${item?.sudoSwapData?.address}`}
-                            className="font-mono font-bold hover:underline hover:text-gray-300"
-                          >
-                            Pool Ca {item?.sudoSwapData?.address}
-                          </Link>
-                        </div>
-                        <div className="text-white text-[10px] font-mono font-bold mt-2 flex justify-start ms-2">
-                          <h3>
-                            Share Price:{" "}
-                            {uintFormat(item?.friendTechData?.displayPrice)} /
-                            Share
-                          </h3>
-                        </div>
-                        <div className="flex justify-start ms-2 gap-2 mt-1">
-                          <h3 className="text-white font-mono text-[10px] font-bold mt-1">
-                            Pool Spot Price{" "}
-                            {uintFormat(item?.sudoSwapData?.spotPrice).toFixed(
-                              3
-                            )}{" "}
-                          </h3>
-                          <img
-                            src="https://dd.dexscreener.com/ds-data/tokens/base/0xddf7d080c82b8048baae54e376a3406572429b4e.png?size=lg&key=18ea46"
-                            alt=""
-                            className="w-5 h-5 rounded-full mt-0.5"
-                          />
-                        </div>
-                        <div className="flex justify-start ms-2 font-mono font-bold text-white text-[10px] mt-1">
-                          <h3>
-                            Swap Fee: %{" "}
-                            {Number(
-                              uintFormat(item?.sudoSwapData?.fee) * 100
-                            ).toFixed(2)}
-                          </h3>
-                        </div>
-                        <div className="flex justify-start ms-2 font-mono font-bold text-white text-[10px] mt-1">
-                          <h3>
-                            Your Share Balance: {Number(item?.userShareBalance)}
-                          </h3>
-                        </div>
-                        <div className="flex justify-start ms-2 font-mono font-bold text-white text-[10px] mt-1">
-                          <h3>
-                            Pool Share Balance:{" "}
-                            {Number(item?.sudoSwapData?.nftBalance)}
-                          </h3>
-                        </div>
-                        <div className="flex justify-center text-[12px] text-white mt-3 gap-2">
-                          {Number(item?.sudoSwapData?.nftBalance > 0) ? (
-                            <>
-                              {item?.userShareBalance > 0 ? (
-                                <>
-                                  {/* <button
+                          <div className="text-white text-[10px] font-mono font-bold mt-2 flex justify-start ms-2">
+                            <h3>
+                              Share Price:{" "}
+                              {uintFormat(item?.friendTechData?.displayPrice)} /
+                              Share
+                            </h3>
+                          </div>
+                          <div className="flex justify-start ms-2 gap-2 mt-1">
+                            <h3 className="text-white font-mono text-[10px] font-bold mt-1">
+                              Pool Spot Price{" "}
+                              {uintFormat(
+                                item?.sudoSwapData?.spotPrice
+                              ).toFixed(3)}{" "}
+                            </h3>
+                            <img
+                              src="https://dd.dexscreener.com/ds-data/tokens/base/0xddf7d080c82b8048baae54e376a3406572429b4e.png?size=lg&key=18ea46"
+                              alt=""
+                              className="w-5 h-5 rounded-full mt-0.5"
+                            />
+                          </div>
+                          <div className="flex justify-start ms-2 font-mono font-bold text-white text-[10px] mt-1">
+                            <h3>
+                              Swap Fee: %{" "}
+                              {Number(
+                                uintFormat(item?.sudoSwapData?.fee) * 100
+                              ).toFixed(2)}
+                            </h3>
+                          </div>
+                          <div className="flex justify-start ms-2 font-mono font-bold text-white text-[10px] mt-1">
+                            <h3>
+                              Your Share Balance:{" "}
+                              {Number(item?.userShareBalance)}
+                            </h3>
+                          </div>
+                          <div className="flex justify-start ms-2 font-mono font-bold text-white text-[10px] mt-1">
+                            <h3>
+                              Pool Share Balance:{" "}
+                              {Number(item?.sudoSwapData?.nftBalance)}
+                            </h3>
+                          </div>
+                          <div className="flex justify-center text-[12px] text-white mt-3 gap-2">
+                            {Number(item?.sudoSwapData?.nftBalance > 0) ? (
+                              <>
+                                {item?.userShareBalance > 0 ? (
+                                  <>
+                                    {/* <button
                                     className="border text-center p-1 bg-black rounded-xl border-slate-500 "
                                     onClick={() => {
                                       purchaseShareFromPool(
@@ -403,6 +412,183 @@ function Pool() {
                                   >
                                     Purchase Shares
                                   </button> */}
+                                    <Menu>
+                                      <MenuButton className="border text-center p-1 bg-black rounded-xl border-slate-500 ">
+                                        Purchase Shares
+                                      </MenuButton>
+                                      <MenuItems
+                                        anchor="top"
+                                        className={"w-[170px]"}
+                                      >
+                                        <MenuItem className=" border border-slate-500 text-white bg-black rounded-lg ">
+                                          <div>
+                                            <div className="flex justify-start">
+                                              <h3 className="text-[8px] text-white p-2">
+                                                Purchase{" "}
+                                                {
+                                                  item?.poolData?.shareData
+                                                    ?.ftName
+                                                }{" "}
+                                                shares
+                                              </h3>
+                                            </div>
+                                            {message ? (
+                                              <div className="flex justify-center text-red-500 text-[8px]">
+                                                {message}
+                                              </div>
+                                            ) : null}
+                                            <div className="p-4">
+                                              <input
+                                                type="text"
+                                                className="bg-stone-800 rounded-lg w-[135px] text-white text-[10px] p-0.5"
+                                                onClick={(e) => {
+                                                  //this prevents from th emenu closing automatically when the user clicks th einput element
+                                                  e.stopPropagation();
+                                                }}
+                                                onChange={(e) => {
+                                                  console.log(e.target.value);
+                                                  setInput(e.target.value);
+                                                }}
+                                              />
+                                              <div className="flex justify-end">
+                                                <h3 className="text-white text-[7px]">
+                                                  Pool Share Balance:{" "}
+                                                  {Number(
+                                                    item?.sudoSwapData
+                                                      ?.nftBalance
+                                                  )}
+                                                </h3>
+                                              </div>
+                                            </div>
+                                            <div className="mt-3 flex justify-center mb-3">
+                                              <button
+                                                className="border text-center p-1 bg-black rounded-lg border-slate-500 text-[10px]"
+                                                onClick={(e) => {
+                                                  if (
+                                                    Number(input) > 0 &&
+                                                    Number(input) <=
+                                                      Number(
+                                                        item?.sudoSwapData
+                                                          ?.nftBalance
+                                                      )
+                                                  ) {
+                                                    purchaseShareFromPool(
+                                                      item?.sudoSwapData
+                                                        ?.erc1155Id,
+                                                      item?.sudoSwapData
+                                                        ?.address,
+                                                      item?.sudoSwapData
+                                                        ?.spotPrice
+                                                    );
+                                                  } else {
+                                                    e.stopPropagation();
+                                                    setMessage(
+                                                      "Invalid Buy Amount"
+                                                    );
+                                                  }
+                                                }}
+                                              >
+                                                Purchase Shares
+                                              </button>
+                                            </div>
+                                          </div>
+                                        </MenuItem>
+                                      </MenuItems>
+                                    </Menu>
+
+                                    <Menu>
+                                      <MenuButton className="border text-center p-1 bg-black rounded-xl border-slate-500 ">
+                                        Sell Shares
+                                      </MenuButton>
+                                      <MenuItems
+                                        anchor="top"
+                                        className={"w-[170px]"}
+                                      >
+                                        <MenuItem className=" border border-slate-500 text-white bg-black rounded-lg ">
+                                          <div>
+                                            <div className="flex justify-start">
+                                              <h3 className="text-[8px] text-white p-2">
+                                                Sell{" "}
+                                                {
+                                                  item?.poolData?.shareData
+                                                    ?.ftName
+                                                }{" "}
+                                                shares
+                                              </h3>
+                                            </div>
+                                            {message ? (
+                                              <div className="flex justify-center text-red-500 text-[8px]">
+                                                {message}
+                                              </div>
+                                            ) : null}
+                                            <div className="p-4">
+                                              <input
+                                                type="text"
+                                                className="bg-stone-800 rounded-lg w-[135px] text-white text-[10px] p-0.5"
+                                                onClick={(e) => {
+                                                  //this prevents from th emenu closing automatically when the user clicks th einput element
+                                                  e.stopPropagation();
+                                                }}
+                                                onChange={(e) => {
+                                                  console.log(e.target.value);
+                                                  setInput(e.target.value);
+                                                }}
+                                              />
+                                              <div className="flex justify-end">
+                                                <h3 className="text-white text-[7px]">
+                                                  Your Share Balance:{" "}
+                                                  {Number(
+                                                    item?.userShareBalance
+                                                  )}
+                                                </h3>
+                                              </div>
+                                            </div>
+                                            <div className="mt-3 flex justify-center mb-3">
+                                              <button
+                                                className="border text-center p-1 bg-black rounded-lg border-slate-500 text-[10px]"
+                                                onClick={(e) => {
+                                                  if (
+                                                    Number(input) > 0 &&
+                                                    Number(input) <=
+                                                      Number(
+                                                        item?.userShareBalance
+                                                      )
+                                                  ) {
+                                                    sellShareFromPool(
+                                                      item?.sudoSwapData
+                                                        ?.erc1155Id,
+                                                      item?.sudoSwapData
+                                                        ?.address,
+                                                      item?.sudoSwapData
+                                                        ?.spotPrice
+                                                    );
+                                                  } else {
+                                                    e.stopPropagation();
+                                                    setMessage("Invalid Input");
+                                                  }
+                                                }}
+                                              >
+                                                Sell Shares
+                                              </button>
+                                            </div>
+                                          </div>
+                                        </MenuItem>
+                                      </MenuItems>
+                                    </Menu>
+                                    {/* <button
+                                    className="border text-center p-1 bg-black rounded-xl border-slate-500 "
+                                    onClick={() => {
+                                      sellShareFromPool(
+                                        item?.sudoSwapData?.erc1155Id,
+                                        item?.sudoSwapData?.address,
+                                        item?.sudoSwapData?.spotPrice
+                                      );
+                                    }}
+                                  >
+                                    Sell Shares
+                                  </button> */}
+                                  </>
+                                ) : (
                                   <Menu>
                                     <MenuButton className="border text-center p-1 bg-black rounded-xl border-slate-500 ">
                                       Purchase Shares
@@ -471,9 +657,7 @@ function Pool() {
                                                   );
                                                 } else {
                                                   e.stopPropagation();
-                                                  setMessage(
-                                                    "Invalid Buy Amount"
-                                                  );
+                                                  setMessage("Invalid Input");
                                                 }
                                               }}
                                             >
@@ -484,7 +668,11 @@ function Pool() {
                                       </MenuItem>
                                     </MenuItems>
                                   </Menu>
-
+                                )}
+                              </>
+                            ) : (
+                              <>
+                                {item?.userShareBalance > 0 ? (
                                   <Menu>
                                     <MenuButton className="border text-center p-1 bg-black rounded-xl border-slate-500 ">
                                       Sell Shares
@@ -561,182 +749,21 @@ function Pool() {
                                       </MenuItem>
                                     </MenuItems>
                                   </Menu>
-                                  {/* <button
-                                    className="border text-center p-1 bg-black rounded-xl border-slate-500 "
-                                    onClick={() => {
-                                      sellShareFromPool(
-                                        item?.sudoSwapData?.erc1155Id,
-                                        item?.sudoSwapData?.address,
-                                        item?.sudoSwapData?.spotPrice
-                                      );
-                                    }}
-                                  >
-                                    Sell Shares
-                                  </button> */}
-                                </>
-                              ) : (
-                                <Menu>
-                                  <MenuButton className="border text-center p-1 bg-black rounded-xl border-slate-500 ">
-                                    Purchase Shares
-                                  </MenuButton>
-                                  <MenuItems
-                                    anchor="top"
-                                    className={"w-[170px]"}
-                                  >
-                                    <MenuItem className=" border border-slate-500 text-white bg-black rounded-lg ">
-                                      <div>
-                                        <div className="flex justify-start">
-                                          <h3 className="text-[8px] text-white p-2">
-                                            Purchase{" "}
-                                            {item?.poolData?.shareData?.ftName}{" "}
-                                            shares
-                                          </h3>
-                                        </div>
-                                        {message ? (
-                                          <div className="flex justify-center text-red-500 text-[8px]">
-                                            {message}
-                                          </div>
-                                        ) : null}
-                                        <div className="p-4">
-                                          <input
-                                            type="text"
-                                            className="bg-stone-800 rounded-lg w-[135px] text-white text-[10px] p-0.5"
-                                            onClick={(e) => {
-                                              //this prevents from th emenu closing automatically when the user clicks th einput element
-                                              e.stopPropagation();
-                                            }}
-                                            onChange={(e) => {
-                                              console.log(e.target.value);
-                                              setInput(e.target.value);
-                                            }}
-                                          />
-                                          <div className="flex justify-end">
-                                            <h3 className="text-white text-[7px]">
-                                              Pool Share Balance:{" "}
-                                              {Number(
-                                                item?.sudoSwapData?.nftBalance
-                                              )}
-                                            </h3>
-                                          </div>
-                                        </div>
-                                        <div className="mt-3 flex justify-center mb-3">
-                                          <button
-                                            className="border text-center p-1 bg-black rounded-lg border-slate-500 text-[10px]"
-                                            onClick={(e) => {
-                                              if (
-                                                Number(input) > 0 &&
-                                                Number(input) <=
-                                                  Number(
-                                                    item?.sudoSwapData
-                                                      ?.nftBalance
-                                                  )
-                                              ) {
-                                                purchaseShareFromPool(
-                                                  item?.sudoSwapData?.erc1155Id,
-                                                  item?.sudoSwapData?.address,
-                                                  item?.sudoSwapData?.spotPrice
-                                                );
-                                              } else {
-                                                e.stopPropagation();
-                                                setMessage("Invalid Input");
-                                              }
-                                            }}
-                                          >
-                                            Purchase Shares
-                                          </button>
-                                        </div>
-                                      </div>
-                                    </MenuItem>
-                                  </MenuItems>
-                                </Menu>
-                              )}
-                            </>
-                          ) : (
-                            <>
-                              {item?.userShareBalance > 0 ? (
-                                <Menu>
-                                  <MenuButton className="border text-center p-1 bg-black rounded-xl border-slate-500 ">
-                                    Sell Shares
-                                  </MenuButton>
-                                  <MenuItems
-                                    anchor="top"
-                                    className={"w-[170px]"}
-                                  >
-                                    <MenuItem className=" border border-slate-500 text-white bg-black rounded-lg ">
-                                      <div>
-                                        <div className="flex justify-start">
-                                          <h3 className="text-[8px] text-white p-2">
-                                            Sell{" "}
-                                            {item?.poolData?.shareData?.ftName}{" "}
-                                            shares
-                                          </h3>
-                                        </div>
-                                        {message ? (
-                                          <div className="flex justify-center text-red-500 text-[8px]">
-                                            {message}
-                                          </div>
-                                        ) : null}
-                                        <div className="p-4">
-                                          <input
-                                            type="text"
-                                            className="bg-stone-800 rounded-lg w-[135px] text-white text-[10px] p-0.5"
-                                            onClick={(e) => {
-                                              //this prevents from th emenu closing automatically when the user clicks th einput element
-                                              e.stopPropagation();
-                                            }}
-                                            onChange={(e) => {
-                                              console.log(e.target.value);
-                                              setInput(e.target.value);
-                                            }}
-                                          />
-                                          <div className="flex justify-end">
-                                            <h3 className="text-white text-[7px]">
-                                              Your Share Balance:{" "}
-                                              {Number(item?.userShareBalance)}
-                                            </h3>
-                                          </div>
-                                        </div>
-                                        <div className="mt-3 flex justify-center mb-3">
-                                          <button
-                                            className="border text-center p-1 bg-black rounded-lg border-slate-500 text-[10px]"
-                                            onClick={(e) => {
-                                              if (
-                                                Number(input) > 0 &&
-                                                Number(input) <=
-                                                  Number(item?.userShareBalance)
-                                              ) {
-                                                sellShareFromPool(
-                                                  item?.sudoSwapData?.erc1155Id,
-                                                  item?.sudoSwapData?.address,
-                                                  item?.sudoSwapData?.spotPrice
-                                                );
-                                              } else {
-                                                e.stopPropagation();
-                                                setMessage("Invalid Input");
-                                              }
-                                            }}
-                                          >
-                                            Sell Shares
-                                          </button>
-                                        </div>
-                                      </div>
-                                    </MenuItem>
-                                  </MenuItems>
-                                </Menu>
-                              ) : (
-                                <button className="border text-center p-1 bg-black rounded-xl border-slate-500 ">
-                                  Trading not available
-                                </button>
-                              )}
-                            </>
-                          )}
+                                ) : (
+                                  <button className="border text-center p-1 bg-black rounded-xl border-slate-500 ">
+                                    Trading not available
+                                  </button>
+                                )}
+                              </>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                );
-              })}
-            </div>
+                  );
+                })}
+              </div>
+            </>
           ) : (
             <div className="flex justify-center gap-2 mt-[180px]">
               <img

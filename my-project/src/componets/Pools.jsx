@@ -316,7 +316,13 @@ function Pools(props) {
   //to withdraw nfts we have to call the created pool address and call this function Function: withdrawERC1155(address a,uint256[] ids,uint256[] amounts) P.S. all pools have the same abi
   //ex deposit tx: https://basescan.org/tx/0x808b1146ff61812f3de81bae6463005f27ef2b4f8d08f94b7d00ce7c39077f12
   return (
-    <center className="overflow-auto h-[270px] w-[410px] border border-slate-500 rounded-xl p-3 ms-[10px] me-5 mb-10">
+    <center
+      className={
+        displayPools
+          ? `overflow-auto h-[270px] w-[410px] border border-slate-500 rounded-xl p-3 ms-[10px] me-5 mb-10`
+          : null
+      }
+    >
       {displayPools ? (
         <>
           {poolData.map((item) => {
@@ -634,7 +640,18 @@ function Pools(props) {
             );
           })}
         </>
-      ) : null}
+      ) : (
+        <div className="flex justify-center gap-2 mt-[50pxx]">
+          <img
+            src="https://forums.frontier.co.uk/attachments/1000012145-png.391294/"
+            alt=""
+            className="w-7 h-7"
+          />
+          <h3 className="text-white font-mono font-bold text-[10px] mt-2">
+            There are currently no pools for this share
+          </h3>
+        </div>
+      )}
     </center>
   );
 }

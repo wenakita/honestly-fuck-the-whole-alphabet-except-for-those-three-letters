@@ -22,7 +22,7 @@ function SearchBar() {
   const [resultType, setResultType] = useState("user");
   useEffect(() => {
     getActivePools();
-  }, []);
+  });
   useEffect(() => {
     if (searchUsers) {
       if (input.includes("0x")) {

@@ -190,6 +190,7 @@ function MyPools() {
       const reciept = await res.wait();
       console.log(await reciept);
       acitvateLoading();
+      setOpen(false);
     } catch (error) {
       console.log(error);
     }
