@@ -27,6 +27,7 @@ import {
   TrashIcon,
 } from "@heroicons/react/16/solid";
 import { parseEther } from "viem";
+import { Link } from "react-router-dom";
 
 function Pools(props) {
   const [poolData, setPoolData] = useState([]);
@@ -42,6 +43,7 @@ function Pools(props) {
   const [goddogToDeposit, setGoddogToDeposit] = useState(null);
   const [sharesToWithdraw, setSharesToWithdraw] = useState(null);
   const [goddogToWithdraw, setGoddogToWithdraw] = useState(null);
+  const [displayPools, setDisplayPools] = useState(false);
   const goddogBalanceResult = useBalance({
     address: w0?.address,
     token: "0xDDf7d080C82b8048BAAe54e376a3406572429b4e",
@@ -94,6 +96,10 @@ function Pools(props) {
               sharePoolData: userPools[key],
             },
           });
+
+          if (!displayPools) {
+            setDisplayPools(true);
+          }
         }
       }
     }
@@ -132,7 +138,6 @@ function Pools(props) {
   //to withdraw all from pool (tokens, and nfts) do this
   //call the pool address call the multicall function
   //pass in these parameters: ()
-  async function withdrawAll() {}
 
   async function transferOwnership(targetPool) {
     const provider = await w0?.getEthersProvider();
@@ -302,35 +307,40 @@ function Pools(props) {
   //to withdraw nfts we have to call the created pool address and call this function Function: withdrawERC1155(address a,uint256[] ids,uint256[] amounts) P.S. all pools have the same abi
   //ex deposit tx: https://basescan.org/tx/0x808b1146ff61812f3de81bae6463005f27ef2b4f8d08f94b7d00ce7c39077f12
   return (
-    <center className="border border-slate-500 rounded-xl p-3 ms-5 me-5 mb-10">
-      {poolData ? (
+    <center className="overflow-auto h-[270px] w-[410px] border border-slate-500 rounded-xl p-3 ms-[10px] me-5 mb-10">
+      {displayPools ? (
         <>
           {poolData.map((item) => {
             return (
               <div
                 key={item}
-                className="border border-slate-500 p-2 w-[320px] rounded-xl"
+                className="border border-slate-500 p-2 w-[320px] rounded-xl mt-3"
               >
                 <div className="p-2">
                   <div>
-                    <div className="flex justify-start text-white gap-2">
-                      <img
-                        src={item?.poolData?.shareData?.ftPfpUrl}
-                        alt=""
-                        className="w-8 h-8 rounded-full"
-                      />
-                      <h3 className="text-white text-[10px] mt-2">
-                        {item?.poolData?.shareData?.ftName}
-                      </h3>
+                    <div className=" text-white gap-2">
+                      <Link
+                        to={`/friend/${item?.poolData?.shareData?.address}`}
+                        className="text-white text-[10px] mt-2 hover:underline flex justify-start gap-2"
+                      >
+                        <img
+                          src={item?.poolData?.shareData?.ftPfpUrl}
+                          alt=""
+                          className="w-8 h-8 rounded-full"
+                        />
+                        <h3 className="mt-2">
+                          {item?.poolData?.shareData?.ftName}
+                        </h3>
+                      </Link>
                     </div>
                   </div>
                   <div className="text-white text-[8px] mt-4">
-                    <a
-                      href=""
+                    <Link
+                      to={`https://sudoswap.xyz/#/manage/base/${item?.poolData?.sharePoolData?.address}`}
                       className="font-mono hover:underline hover:text-gray-300 font-bold"
                     >
                       Pool Ca: {item?.poolData?.sharePoolData?.address}
-                    </a>
+                    </Link>
                   </div>
                   <div className="text-white text-[10px] font-mono font-bold mt-2">
                     <h3>
@@ -540,7 +550,10 @@ function Pools(props) {
                               />
                               <div className="flex justify-end">
                                 <h3 className="text-white text-[7px]">
-                                  $OOOooo pool Balance:
+                                  $OOOooo pool Balance:{" "}
+                                  {uintFormat(
+                                    item?.poolData?.sharePoolData?.spotPrice
+                                  )}
                                 </h3>
                               </div>
                             </div>
@@ -566,49 +579,6 @@ function Pools(props) {
                     <Menu>
                       <MenuButton className="border text-center p-1 bg-black rounded-lg border-slate-500 ">
                         Transfer Ownership
-                      </MenuButton>
-                      <MenuItems anchor="top" className={"w-[170px]"}>
-                        <MenuItem className=" border border-slate-500 text-white bg-black rounded-lg ">
-                          <div>
-                            <div className="flex justify-start">
-                              <h3 className="text-[8px] text-white p-2">
-                                Transfer Pool Ownership
-                              </h3>
-                            </div>
-                            <div className="p-4">
-                              <input
-                                type="text"
-                                className="bg-stone-800 rounded-lg w-[135px] text-white text-[10px] p-0.5"
-                                onClick={(e) => {
-                                  //this prevents from th emenu closing automatically when the user clicks th einput element
-                                  e.stopPropagation();
-                                }}
-                                onChange={(e) => {
-                                  console.log(e.target.value);
-                                  setNewOwner(e.target.value);
-                                }}
-                              />
-                            </div>
-                            <div className="mt-3 flex justify-center mb-3">
-                              <button
-                                className="border text-center p-1 bg-black rounded-lg border-slate-500 text-[10px]"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  transferOwnership(
-                                    item?.poolData?.sharePoolData?.address
-                                  );
-                                }}
-                              >
-                                Transfer Ownership
-                              </button>
-                            </div>
-                          </div>
-                        </MenuItem>
-                      </MenuItems>
-                    </Menu>
-                    <Menu>
-                      <MenuButton className="border text-center p-1 bg-black rounded-lg border-slate-500 ">
-                        Withdraw All
                       </MenuButton>
                       <MenuItems anchor="top" className={"w-[170px]"}>
                         <MenuItem className=" border border-slate-500 text-white bg-black rounded-lg ">

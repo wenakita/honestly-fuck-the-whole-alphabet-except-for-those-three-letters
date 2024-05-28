@@ -151,6 +151,7 @@ function SearchBar() {
       <input
         type="text"
         className="text-white border border-slate-500 bg-stone-800 rounded-xl w-[300px]"
+        value={input}
         onChange={(e) => {
           console.log(e.target.value);
           setInput(e.target.value);
@@ -165,7 +166,7 @@ function SearchBar() {
           <div className="flex justify-between">
             <div className="flex justify-start gap-2 text-[12px] p-2">
               <button
-                className="text-white"
+                className="text-white  hover:underline"
                 onClick={() => {
                   console.log("henlo");
                   setSearchUsers(true);
@@ -177,7 +178,7 @@ function SearchBar() {
                 Users
               </button>
               <button
-                className="text-white"
+                className="text-white hover:underline"
                 onClick={() => {
                   console.log("henlo");
                   setSearchUsers(false);
@@ -254,6 +255,7 @@ function SearchBar() {
                             className="border border-slate-500 p-3 grid grid-cols-3 text-white"
                             key={item}
                             onClick={() => {
+                              setInput("");
                               setActivateResults(false);
                             }}
                           >
@@ -303,6 +305,7 @@ function SearchBar() {
                           to={`/pool/${item?.sudoSwapData?.erc1155Id}`}
                           className="border border-slate-500 p-3 grid grid-cols-3 text-white text-[10px]"
                           onClick={() => {
+                            setInput("");
                             setActivateResults(false);
                           }}
                         >
@@ -337,7 +340,7 @@ function SearchBar() {
                 </>
               ) : (
                 <div className="border border-slate-500 text-white text-center">
-                  no users found
+                  no pools found
                 </div>
               )}
             </div>

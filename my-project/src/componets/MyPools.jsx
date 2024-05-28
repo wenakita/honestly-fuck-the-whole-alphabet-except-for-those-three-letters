@@ -220,7 +220,7 @@ function MyPools() {
           <div className="text-center font-mono font-bold text-white text-[20px]">
             Pools Owned:
           </div>
-          <div className="text-white">
+          <center className="text-white mt-10 ">
             {userPools || userPools !== null ? (
               <Pools userPools={userPools} />
             ) : (
@@ -235,7 +235,7 @@ function MyPools() {
                 </h3>
               </div>
             )}
-          </div>
+          </center>
           {open ? (
             <div
               className="relative z-10"

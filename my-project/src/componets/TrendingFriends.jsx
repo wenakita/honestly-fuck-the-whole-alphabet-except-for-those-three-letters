@@ -13,11 +13,11 @@ function TrendingFriends(props) {
       <div className="mt-2 overflow-auto h-[550px] border border-slate-500 rounded-xl">
         {data ? (
           <>
-            {data.map((item) => {
+            {data.map((item, index) => {
               return (
                 <div
                   key={item}
-                  className="border border-slate-500 rounded-xl bg-black grid grid-flow-col gap-2 p-3 text-white"
+                  className={`border border-slate-500 rounded-xl bg-black grid grid-flow-col gap-2 p-3 text-white ${index !== 0 ? `mt-2` : null}`}
                 >
                   <div>
                     <Link
