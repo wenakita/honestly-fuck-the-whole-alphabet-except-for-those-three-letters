@@ -25,7 +25,7 @@ function FriendTechPools() {
   const [message, setMessage] = useState(null);
   useEffect(() => {
     getExistingPools();
-  });
+  }, []);
   useEffect(() => {
     setTimeout(() => {
       setLoading(false);
