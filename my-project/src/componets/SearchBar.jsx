@@ -22,7 +22,7 @@ function SearchBar() {
   const [resultType, setResultType] = useState("user");
   useEffect(() => {
     getActivePools();
-  });
+  }, [activateResults]);
   useEffect(() => {
     if (searchUsers) {
       if (input.includes("0x")) {
@@ -233,7 +233,7 @@ function SearchBar() {
                         </div>
                         <div>
                           <h3 className="text-white text-[10px]">
-                            Holders: {caResults?.holderCount}
+                            Holders: {Number(caResults?.holderCount)}
                           </h3>
                         </div>
                       </Link>

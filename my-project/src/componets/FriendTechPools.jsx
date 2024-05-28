@@ -25,6 +25,7 @@ function FriendTechPools() {
   const [message, setMessage] = useState(null);
   useEffect(() => {
     getExistingPools();
+    console.log("running");
   }, []);
   useEffect(() => {
     setTimeout(() => {
@@ -49,12 +50,7 @@ function FriendTechPools() {
     let a = await q.getPoolsForCollection(
       "0xbeea45F16D512a01f7E2a3785458D4a7089c8514"
     );
-    const testingPool = await q.getAskQuotes(
-      "0xb64fdbed2182ff61903ea09206434ab46f3ed4f6",
-      "915310770104444432551381599323274438466366211043",
-      "0xddf7d080c82b8048baae54e376a3406572429b4e"
-    );
-    console.log(await testingPool);
+
     console.log(a);
     //currently since we just mad epool we can only buy so nft baalnce is greater than zero
     for (const key in a) {
@@ -62,6 +58,7 @@ function FriendTechPools() {
       const currentShareContract = await getShareUri(currentId);
       if (currentShareContract !== null) {
         const currentShareData = await getShareData(currentShareContract);
+        console.log(currentShareData);
         if (currentShareData !== null) {
           const userShareBalance = await getUserShareBalance(currentId);
           console.log(userShareBalance);
