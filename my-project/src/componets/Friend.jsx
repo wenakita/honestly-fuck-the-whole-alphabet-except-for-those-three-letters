@@ -10,7 +10,6 @@ function Friend() {
   const [shareBalance, setShareBalance] = useState("0");
   const [loading, setLoading] = useState(true);
   const { address } = useParams();
-  console.log(address);
   useEffect(() => {
     fetchInfo();
     getFollowers();
@@ -20,20 +19,15 @@ function Friend() {
   }, [address]);
 
   async function fetchInfo() {
-    console.log(address);
-
     const results = await SearchByContract(address);
-    console.log(results);
     setData(results);
   }
 
   async function getFollowers() {
     const response = await fetchFollowers(data?.address);
-    console.log(response);
     setFollowers(await response);
   }
 
-  console.log(address);
   return (
     <div className="mt-10 container p-5 mb-10">
       {loading ? (
@@ -56,7 +50,14 @@ function Friend() {
                     className="w-26 h-16 rounded-full"
                   />
                 </div>
-                <div className="text-white text-[20px] p-2">{data?.ftName}</div>
+                <div className="text-white text-[20px] p-2 flex justify-start gap-1">
+                  <img
+                    src="https://i.postimg.cc/qqhQyJgK/friendmint-removebg-preview.png"
+                    alt=""
+                    className="w-5 h-5 rounded-full mt-1"
+                  />
+                  {data?.ftName}
+                </div>
 
                 <div className=" p-2">
                   <a

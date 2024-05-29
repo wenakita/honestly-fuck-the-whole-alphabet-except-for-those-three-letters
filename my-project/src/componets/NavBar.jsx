@@ -1,6 +1,7 @@
 import { usePrivy } from "@privy-io/react-auth";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 function NavBar() {
   const [oooPrice, setOooPrice] = useState(null);
   const navigate = useNavigate();
@@ -47,6 +48,9 @@ function NavBar() {
             />
             <h3 className="text-white mt-2 text-[10px]">{oooPrice}</h3>
           </Link>
+          <Link to="*" className="text-white text-center p-5 mt-2 font-bold ">
+            Notion
+          </Link>
 
           <Link
             to="/home"
@@ -56,24 +60,52 @@ function NavBar() {
           </Link>
           <Link
             to="/pools"
-            className="text-white text-center p-5 mt-2 font-bold"
+            className="text-white text-center p-5 mt-2 font-bold "
           >
             Pools
           </Link>
 
-          <Link
-            to={"/balances"}
-            className="text-white text-center p-5 mt-2 font-bold"
-          >
-            Balance
-          </Link>
+          <Menu>
+            <MenuButton>
+              <img
+                src="https://enterprisefilmsllc.com/wp-content/uploads/2018/07/white-down-arrow-png-2.png"
+                alt=""
+                className="w-3 h-4 me-2"
+              />
+            </MenuButton>
+            <MenuItems
+              anchor="bottom"
+              className={
+                "border border-slate-500 rounded-lg p-2 bg-black grid grid-flow-row m"
+              }
+            >
+              <MenuItem className="text-white text-center p-1 mt-1 font-bold text-[8px]">
+                <Link
+                  to={"/balances"}
+                  className="text-white text-center p-1 mt-2 font-bold"
+                >
+                  Balance
+                </Link>
+              </MenuItem>
+              <MenuItem>
+                <Link
+                  to={"/my-pools"}
+                  className="text-white text-center p-1 mt-2 font-bold text-[8px]"
+                >
+                  My Pools
+                </Link>
+              </MenuItem>
 
-          <Link
-            to={"/my-pools"}
-            className="text-white text-center p-5 mt-2 font-bold"
-          >
-            My Pools
-          </Link>
+              <MenuItem>
+                <Link
+                  to={"/icnu"}
+                  className="text-white text-center p-1 mt-2 font-bold text-[8px]"
+                >
+                  Incubator
+                </Link>
+              </MenuItem>
+            </MenuItems>
+          </Menu>
 
           <div className="grid grid-flow-row me-3">
             <button

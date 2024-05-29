@@ -50,9 +50,9 @@ function Pools(props) {
     token: "0xDDf7d080C82b8048BAAe54e376a3406572429b4e",
     chainId: base.id,
   });
+  const [message, setMessage] = useState(null);
 
   const goddogBalance = Number(goddogBalanceResult?.data?.value) / 10 ** 18;
-  console.log(goddogBalance.toFixed(2));
   useEffect(() => {
     getSharesData();
   }, [userPools]);
@@ -71,7 +71,6 @@ function Pools(props) {
   }
 
   async function getBalanceOfShare(targetId) {
-    console.log(targetId);
     const balanceResult = readContract(config, {
       address: friendWrapperContract,
       abi: friendTechABI,
@@ -79,7 +78,6 @@ function Pools(props) {
       args: [w0?.address, targetId],
     });
     const balanceFound = await balanceResult;
-    console.log(String(Number(balanceFound)));
     setCurrentShareBalance(String(Number(balanceFound)));
   }
 
@@ -172,7 +170,6 @@ function Pools(props) {
       signer
     );
     try {
-      console.log("running");
       const res = await SudoSwapContract.depositERC20(
         goddogContract,
         targetPool,
@@ -196,7 +193,6 @@ function Pools(props) {
       signer
     );
     try {
-      console.log("running");
       const res = await goddogContractInstance.approve(
         "0x605145D263482684590f630E9e581B21E4938eb8",
         "99999999999999999999999999999999"
@@ -241,9 +237,7 @@ function Pools(props) {
       SudoSwapABI,
       signer
     );
-    console.log(sharesToDeposit);
     try {
-      console.log("running");
       const res = await SudoSwapContract.depositERC1155(
         friendWrapperContract,
         targetId,
@@ -270,7 +264,6 @@ function Pools(props) {
       signer
     );
     try {
-      console.log("running");
       const res = await SudoSwapPoolContract.withdrawERC20(
         goddogContract,
         ethers.BigNumber.from(goddogToWithdraw)
@@ -280,6 +273,7 @@ function Pools(props) {
       const reciept = await res.wait();
       console.log(await reciept);
       activateLoading();
+      displayPools(false);
       getSharesData();
     } catch (error) {
       console.log(error);
@@ -301,20 +295,14 @@ function Pools(props) {
       );
       const reciept = await res.wait();
       console.log(await reciept);
-      console.log("running");
       activateLoading();
+      displayPools(false);
       getSharesData();
     } catch (error) {
       console.log(error);
     }
   }
 
-  //add bonding curve typew in pool card
-  //the specific pool contract in the read section we can get buy and sell price
-  //function to deposit shares in the sudoswap contract (0x605145D263482684590f630E9e581B21E4938eb8)  : depositERC1155(address nft (the friend tech wrapper contract goes here),uint256 id,address recipient(recipient is the pools address we want to deposit to)  ,uint256 amount (number of shares to deposit))  P.S. we have to ask for approval to spend nft and goddog before doing these deposits
-  //function to deposit goddog tokens in the sudoswap contract (0x605145D263482684590f630E9e581B21E4938eb8) : depositERC20(goddogContract, recipient (recipient is the pool address we want to deposit to), amount of tokens to deposit) P.S. we have to ask for approval to spend nft and goddog before doing these deposits
-  //to withdraw nfts we have to call the created pool address and call this function Function: withdrawERC1155(address a,uint256[] ids,uint256[] amounts) P.S. all pools have the same abi
-  //ex deposit tx: https://basescan.org/tx/0x808b1146ff61812f3de81bae6463005f27ef2b4f8d08f94b7d00ce7c39077f12
   return (
     <center
       className={
@@ -386,6 +374,7 @@ function Pools(props) {
                           getShareBalance(
                             item?.poolData?.sharePoolData?.erc1155Id
                           );
+                          setMessage(null);
                         }}
                       >
                         Deposit Shares
@@ -399,6 +388,11 @@ function Pools(props) {
                                 shares
                               </h3>
                             </div>
+                            {message ? (
+                              <div className="flex justify-center text-red-500 text-[8px]">
+                                {message}
+                              </div>
+                            ) : null}
                             <div className="p-4">
                               <input
                                 type="text"
@@ -408,7 +402,8 @@ function Pools(props) {
                                   e.stopPropagation();
                                 }}
                                 onChange={(e) => {
-                                  console.log(e.target.value);
+                                  setMessage(null);
+
                                   setSharesToDeposit(e.target.value);
                                 }}
                               />
@@ -423,10 +418,19 @@ function Pools(props) {
                                 className="border text-center p-1 bg-black rounded-lg border-slate-500 text-[10px]"
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  depositSpecificShares(
-                                    item?.poolData?.sharePoolData?.erc1155Id,
-                                    item?.poolData?.sharePoolData?.address
-                                  );
+
+                                  if (
+                                    Number(sharesToDeposit) >
+                                      Number(currentShareBalance) ||
+                                    !Number(sharesToDeposit)
+                                  ) {
+                                    setMessage("Invalid Input");
+                                  } else {
+                                    depositSpecificShares(
+                                      item?.poolData?.sharePoolData?.erc1155Id,
+                                      item?.poolData?.sharePoolData?.address
+                                    );
+                                  }
                                 }}
                               >
                                 Deposit Shares
@@ -438,7 +442,12 @@ function Pools(props) {
                     </Menu>
 
                     <Menu>
-                      <MenuButton className="border text-center p-1 bg-black rounded-xl border-slate-500 ">
+                      <MenuButton
+                        className="border text-center p-1 bg-black rounded-xl border-slate-500 "
+                        onClick={() => {
+                          setMessage(null);
+                        }}
+                      >
                         Deposit Goddog
                       </MenuButton>
                       <MenuItems anchor="top" className={"w-[170px]"}>
@@ -449,22 +458,27 @@ function Pools(props) {
                                 Deposit Goddog
                               </h3>
                             </div>
+                            {message ? (
+                              <div className="flex justify-center text-red-500 text-[8px]">
+                                {message}
+                              </div>
+                            ) : null}
                             <div className="p-4">
                               <input
                                 type="text"
                                 className="bg-stone-800 rounded-lg w-[135px] text-white text-[10px] p-0.5"
                                 onClick={(e) => {
-                                  //this prevents from th emenu closing automatically when the user clicks th einput element
                                   e.stopPropagation();
                                 }}
                                 onChange={(e) => {
-                                  console.log(e.target.value);
+                                  setMessage(null);
                                   setGoddogToDeposit(e.target.value);
                                 }}
                               />
                               <div className="flex justify-end">
                                 <h3 className="text-white text-[6px]">
-                                  $OOOooo Balance: {goddogBalance}
+                                  $OOOooo Balance:{" "}
+                                  {Number(goddogBalance).toFixed(2)}
                                 </h3>
                               </div>
                             </div>
@@ -473,9 +487,18 @@ function Pools(props) {
                                 className="border text-center p-1 bg-black rounded-lg border-slate-500 text-[10px]"
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  depositGoddog(
-                                    item?.poolData?.sharePoolData?.address
-                                  );
+
+                                  if (
+                                    Number(goddogToDeposit) >
+                                      Number(goddogBalance) ||
+                                    !Number(goddogToDeposit)
+                                  ) {
+                                    setMessage("Invalid Input");
+                                  } else {
+                                    depositGoddog(
+                                      item?.poolData?.sharePoolData?.address
+                                    );
+                                  }
                                 }}
                               >
                                 Deposit Goddog
@@ -486,7 +509,12 @@ function Pools(props) {
                       </MenuItems>
                     </Menu>
                     <Menu>
-                      <MenuButton className="border text-center p-1 bg-black rounded-xl border-slate-500 ">
+                      <MenuButton
+                        className="border text-center p-1 bg-black rounded-xl border-slate-500 "
+                        onClick={() => {
+                          setMessage(null);
+                        }}
+                      >
                         Withdraw Shares
                       </MenuButton>
                       <MenuItems anchor="top" className={"w-[170px]"}>
@@ -498,6 +526,11 @@ function Pools(props) {
                                 shares
                               </h3>
                             </div>
+                            {message ? (
+                              <div className="flex justify-center text-red-500 text-[8px]">
+                                {message}
+                              </div>
+                            ) : null}
                             <div className="p-4">
                               <input
                                 type="text"
@@ -507,7 +540,7 @@ function Pools(props) {
                                   e.stopPropagation();
                                 }}
                                 onChange={(e) => {
-                                  console.log(e.target.value);
+                                  setMessage(null);
                                   setSharesToWithdraw(e.target.value);
                                 }}
                               />
@@ -525,10 +558,22 @@ function Pools(props) {
                                 className="border text-center p-1 bg-black rounded-lg border-slate-500 text-[10px]"
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  withdrawSpecificShares(
-                                    item?.poolData?.sharePoolData?.erc1155Id,
-                                    item?.poolData?.sharePoolData?.address
-                                  );
+
+                                  if (
+                                    Number(sharesToWithdraw) >
+                                      Number(
+                                        item?.poolData?.sharePoolData
+                                          ?.nftBalance
+                                      ) ||
+                                    !Number(sharesToWithdraw)
+                                  ) {
+                                    setMessage("Invalid Input");
+                                  } else {
+                                    withdrawSpecificShares(
+                                      item?.poolData?.sharePoolData?.erc1155Id,
+                                      item?.poolData?.sharePoolData?.address
+                                    );
+                                  }
                                 }}
                               >
                                 Withdraw Shares
@@ -539,7 +584,12 @@ function Pools(props) {
                       </MenuItems>
                     </Menu>
                     <Menu>
-                      <MenuButton className="border text-center p-1 bg-black rounded-xl border-slate-500 ">
+                      <MenuButton
+                        className="border text-center p-1 bg-black rounded-xl border-slate-500 "
+                        onClick={() => {
+                          setMessage(null);
+                        }}
+                      >
                         Withdraw Goddog
                       </MenuButton>
                       <MenuItems anchor="top" className={"w-[170px]"}>
@@ -550,6 +600,11 @@ function Pools(props) {
                                 Withdraw Goddog
                               </h3>
                             </div>
+                            {message ? (
+                              <div className="flex justify-center text-red-500 text-[8px]">
+                                {message}
+                              </div>
+                            ) : null}
                             <div className="p-4">
                               <input
                                 type="text"
@@ -559,7 +614,7 @@ function Pools(props) {
                                   e.stopPropagation();
                                 }}
                                 onChange={(e) => {
-                                  console.log(e.target.value);
+                                  setMessage(null);
                                   setGoddogToWithdraw(e.target.value);
                                 }}
                               />
@@ -568,7 +623,7 @@ function Pools(props) {
                                   $OOOooo pool Balance:{" "}
                                   {uintFormat(
                                     item?.poolData?.sharePoolData?.spotPrice
-                                  )}
+                                  ).toFixed(2)}
                                 </h3>
                               </div>
                             </div>
@@ -577,9 +632,20 @@ function Pools(props) {
                                 className="border text-center p-1 bg-black rounded-lg border-slate-500 text-[10px]"
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  withdrawGoddog(
-                                    item?.poolData?.sharePoolData?.address
-                                  );
+
+                                  if (
+                                    Number(goddogToWithdraw) >
+                                      uintFormat(
+                                        item?.poolData?.sharePoolData?.spotPrice
+                                      ) ||
+                                    !Number(goddogToWithdraw)
+                                  ) {
+                                    setMessage("Invalid Input");
+                                  } else {
+                                    withdrawGoddog(
+                                      item?.poolData?.sharePoolData?.address
+                                    );
+                                  }
                                 }}
                               >
                                 Withdraw Goddog

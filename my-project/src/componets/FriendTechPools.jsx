@@ -23,9 +23,11 @@ function FriendTechPools() {
   const [displayPools, setDisplayPools] = useState(false);
   const [input, setInput] = useState(null);
   const [message, setMessage] = useState(null);
+  const [singleBuyQuote, setSingleBuyQuote] = useState(null);
+  const [singleSellQuote, setSingleSellQuote] = useState(null);
+
   useEffect(() => {
     getExistingPools();
-    console.log("running");
   }, []);
   useEffect(() => {
     setTimeout(() => {
@@ -41,9 +43,6 @@ function FriendTechPools() {
     }, [2000]);
   }
 
-  //before we buy the nft we have to call the getBuyNFTQuote function in pool contract
-  //so tx only works after clicking second time because of use state when we storebuy and sell quotes so we are gonna have to find a way around this
-
   async function getExistingPools() {
     const poolFormattedData = [];
     let q = new Quoter(API_KEY, 8453);
@@ -51,21 +50,28 @@ function FriendTechPools() {
       "0xbeea45F16D512a01f7E2a3785458D4a7089c8514"
     );
 
-    console.log(a);
-    //currently since we just mad epool we can only buy so nft baalnce is greater than zero
     for (const key in a) {
       const currentId = a[key]?.erc1155Id;
       const currentShareContract = await getShareUri(currentId);
+      const currentPoolAddress = a[key].address;
       if (currentShareContract !== null) {
         const currentShareData = await getShareData(currentShareContract);
-        console.log(currentShareData);
         if (currentShareData !== null) {
           const userShareBalance = await getUserShareBalance(currentId);
-          console.log(userShareBalance);
+          const buyPrice = await getSingleBuyNftPrice(
+            currentId,
+            currentPoolAddress
+          );
+          const sellPrice = await getSingleSellNftPrice(
+            currentId,
+            currentPoolAddress
+          );
           poolFormattedData.push({
             sudoSwapData: a[key],
             friendTechData: currentShareData,
             userShareBalance: userShareBalance,
+            buyPrice: sellPrice,
+            sellPrice: buyPrice,
           });
           setDisplayPools(true);
         }
@@ -74,9 +80,40 @@ function FriendTechPools() {
     setPoolsData(poolFormattedData);
   }
 
+  async function getSingleSellNftPrice(targetid, targetPool) {
+    try {
+      const buyQuoteResult = await readContract(config, {
+        address: targetPool,
+        abi: SudoSwapPoolABI,
+        functionName: "getBuyNFTQuote",
+        args: [targetid, "1"],
+      });
+      const output = Number(buyQuoteResult[3]) / 10 ** 18;
+
+      //index 0 is the error (ignore), index 1, is the new spot price after the buy is complete, index 2 is the new delta, index 3 is the goddog price to buy the share currently, index 4 is the protocol fee charged, index 5 is the royalty amount is zero
+      return output.toFixed(2);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async function getSingleBuyNftPrice(targetId, TargetPool) {
+    try {
+      const buyQuoteResult = await readContract(config, {
+        address: TargetPool,
+        abi: SudoSwapPoolABI,
+        functionName: "getSellNFTQuote",
+        args: [targetId, "1"],
+      });
+      //index 0 is the error (ignore), index 1, is the new spot price after the buy is complete, index 2 is the new delta, index 3 is the goddog price to buy the share currently, index 4 is the protocol fee charged, index 5 is the royalty amount is zero
+      const output = Number(buyQuoteResult[3]) / 10 ** 18;
+      return Number(output.toFixed(2));
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   async function getButNftQuote(targetid, targetPool) {
-    console.log(targetid);
-    console.log(targetPool);
     try {
       const buyQuoteResult = await readContract(config, {
         address: targetPool,
@@ -85,15 +122,13 @@ function FriendTechPools() {
         args: [targetid, input],
       });
       //index 0 is the error (ignore), index 1, is the new spot price after the buy is complete, index 2 is the new delta, index 3 is the goddog price to buy the share currently, index 4 is the protocol fee charged, index 5 is the royalty amount is zero
-      console.log(buyQuoteResult);
+
       return buyQuoteResult;
     } catch (error) {
       console.log(error);
     }
   }
   async function getSellNftQuote(targetId, TargetPool) {
-    console.log(targetId);
-    console.log(TargetPool);
     try {
       const buyQuoteResult = await readContract(config, {
         address: TargetPool,
@@ -102,7 +137,7 @@ function FriendTechPools() {
         args: [targetId, input],
       });
       //index 0 is the error (ignore), index 1, is the new spot price after the buy is complete, index 2 is the new delta, index 3 is the goddog price to buy the share currently, index 4 is the protocol fee charged, index 5 is the royalty amount is zero
-      console.log(buyQuoteResult);
+
       return buyQuoteResult;
     } catch (error) {
       console.log(error);
@@ -127,11 +162,11 @@ function FriendTechPools() {
       console.log(await reciept);
     } catch (error) {
       console.log(error);
+      setMessage("Transaction Reverted");
     }
   }
 
   async function approveShareSpending() {
-    console.log("Approving");
     try {
       const provider = await w0?.getEthersProvider();
       const network = await provider.getNetwork();
@@ -150,13 +185,12 @@ function FriendTechPools() {
       console.log(await reciept);
     } catch (error) {
       console.log(error);
+      setMessage("Transaction Reverted");
     }
   }
 
   //when u sell a share to the pool the pool automatically deposits the shares to the pool
   async function sellShareFromPool(targetPoolId, TargetPoolAddress, spotPrice) {
-    console.log(targetPoolId, TargetPoolAddress);
-    console.log(spotPrice);
     const nftBuyQuote = await getSellNftQuote(targetPoolId, TargetPoolAddress);
     await approveShareSpending();
 
@@ -171,11 +205,6 @@ function FriendTechPools() {
     //index 0 is the error (ignore), index 1, is the new spot price after the buy is complete, index 2 is the new delta, index 3 is the goddog price to buy the share currently, index 4 is the protocol fee charged, index 5 is the royalty amount is zero
 
     try {
-      console.log("running");
-      console.log(String(nftBuyQuote[3]));
-      console.log(TargetPoolAddress);
-      console.log(spotPrice);
-
       const parameters = [
         [],
         [
@@ -202,9 +231,11 @@ function FriendTechPools() {
       console.log(await reciept);
 
       acitvateLoading();
+      setDisplayPools(false);
       getExistingPools();
     } catch (error) {
       console.log(error);
+      setMessage("Transaction Reverted");
     }
   }
 
@@ -223,14 +254,8 @@ function FriendTechPools() {
       SudoSwapPoolTXABI,
       signer
     );
-    //index 0 is the error (ignore), index 1, is the new spot price after the buy is complete, index 2 is the new delta, index 3 is the goddog price to buy the share currently, index 4 is the protocol fee charged, index 5 is the royalty amount is zero
 
     try {
-      console.log("running");
-      console.log(String(nftBuyQuote[3]));
-      console.log(TargetPoolAddress);
-      console.log(spotPrice);
-
       const parameters = [
         [
           [
@@ -249,77 +274,18 @@ function FriendTechPools() {
         false,
       ];
       const res = await sudoSwapContract.swap(parameters, {
-        gasLimit: 250000,
+        gasLimit: 200000,
       });
       const reciept = await res.wait();
       console.log(await reciept);
       acitvateLoading();
+      setDisplayPools(false);
       getExistingPools();
     } catch (error) {
       console.log(error);
+      setMessage("Transaction Reverted");
     }
   }
-
-  //to buy you call swap function on sudoswap contract
-  //these are params
-  //swapOrder.tokenRecipient	address	0xa24e1426Bc37d0D1a9e7037f5De3322E800F2D7d
-  // 0	swapOrder.nftRecipient	address	0xa24e1426Bc37d0D1a9e7037f5De3322E800F2D7d
-  //here is what we get to buy params tenderly : {
-  // "swapOrder": {
-  //     "buyOrders": [
-  //       {
-  //         "pair": "0xb64fdbed2182ff61903ea09206434ab46f3ed4f6" (this is pool address),
-  //         "isERC721": false,
-  //         "nftIds": [
-  //           "1"
-  //         ],
-  //         "maxInputAmount": "3516666666666666666667" (buying for 5516 goddog tokens (current buy price of buying one share from pool in goddog tokens)),
-  //         "ethAmount": "0",
-  //         "expectedSpotPrice": "10000000000000000000000", (this is the current pools goddog balance ex when we create a pool we deposit an amount of goddog to pair with nft (amount subject to change on trade))
-  //         "maxCostPerNumNFTs": [
-  //           "3516666666666666666667" (current buy price of buying one share from pool in goddog tokens)
-  //         ]
-  //       }
-  //     ],
-  //     "sellOrders": [], (since we are not buying this array(tuple) is empty)
-  //     "tokenRecipient": "0xa24e1426bc37d0d1a9e7037f5de3322e800f2d7d" (person who is buying share),
-  //     "nftRecipient": "0xa24e1426bc37d0d1a9e7037f5de3322e800f2d7d" (person who is buying share),
-  //     "recycleETH": false (always false)
-  //   }
-  // }
-
-  //smae thing for the call below
-
-  // // to sell we call swap again
-  // Function: swap((tuple[],tuple[],address,address,bool))
-  // #	Name	Type	Data
-  // 0	swapOrder.tokenRecipient	address	0xa24e1426Bc37d0D1a9e7037f5De3322E800F2D7d
-  // 0	swapOrder.nftRecipient	address	0xa24e1426Bc37d0D1a9e7037f5De3322E800F2D7d
-
-  //here is what we get from tenderly for params to sell:
-  // swapOrder":{
-  //   "buyOrders":[]
-  //   "sellOrders":[
-  //   0:{
-  //   "pair":"0xb64fdbed2182ff61903ea09206434ab46f3ed4f6"
-  //   "isETHSell":false
-  //   "isERC721":false
-  //   "nftIds":[
-  //   0:"1"
-  //   ]
-  //   "doPropertyCheck":false
-  //   "propertyCheckParams":"0x"
-  //   "expectedSpotPrice":"13333333333333333333333"
-  //   "minExpectedOutput":"3149999999999999999999"
-  //   "minExpectedOutputPerNumNFTs":[
-  //   0:"3150000000000000000000"
-  //   ]
-  //   }
-  //   ]
-  //   "tokenRecipient":"0xa24e1426bc37d0d1a9e7037f5de3322e800f2d7d"
-  //   "nftRecipient":"0xa24e1426bc37d0d1a9e7037f5de3322e800f2d7d"
-  //   "recycleETH":false
-  //   }
 
   async function getShareUri(targetId) {
     try {
@@ -338,8 +304,6 @@ function FriendTechPools() {
   }
 
   async function getUserShareBalance(targetId) {
-    console.log(targetId);
-    console.log("running");
     try {
       const userBalanceResult = await readContract(config, {
         address: "0xbeea45F16D512a01f7E2a3785458D4a7089c8514",
@@ -371,7 +335,6 @@ function FriendTechPools() {
     }
   }
 
-  const [availablePools, setAvailablePools] = useState(null);
   return (
     <center className="mb-20">
       <div className="text-[30px] text-center p-5  flex justify-center">
@@ -403,7 +366,7 @@ function FriendTechPools() {
                 : null
             }
           >
-            {displayPools || poolsData ? (
+            {displayPools && poolsData ? (
               <>
                 {poolsData.map((item) => {
                   return (
@@ -428,12 +391,12 @@ function FriendTechPools() {
                           </div>
                         </div>
                         <div className="text-white text-[8px] mt-4 flex justify-start ms-2">
-                          <a
-                            href=""
+                          <Link
+                            to={`https://sudoswap.xyz/#/manage/base/${item?.sudoSwapData?.address}`}
                             className="font-mono font-bold hover:underline hover:text-gray-300"
                           >
                             Pool Ca {item?.sudoSwapData?.address}
-                          </a>
+                          </Link>
                         </div>
                         <div className="text-white text-[10px] font-mono font-bold mt-2 flex justify-start ms-2">
                           <h3>
@@ -444,7 +407,7 @@ function FriendTechPools() {
                         </div>
                         <div className="flex justify-start ms-2 gap-2 mt-1">
                           <h3 className="text-white font-mono text-[10px] font-bold mt-1">
-                            Pool Spot Price{" "}
+                            Liquidity Provided{" "}
                             {uintFormat(item?.sudoSwapData?.spotPrice).toFixed(
                               3
                             )}{" "}
@@ -453,6 +416,26 @@ function FriendTechPools() {
                             src="https://dd.dexscreener.com/ds-data/tokens/base/0xddf7d080c82b8048baae54e376a3406572429b4e.png?size=lg&key=18ea46"
                             alt=""
                             className="w-5 h-5 rounded-full mt-0.5"
+                          />
+                        </div>
+                        <div className="flex justify-start ms-2 font-mono font-bold text-white text-[10px] mt-1 gap-1">
+                          <h3 className="mt-0.5">
+                            Buy Price: {item?.buyPrice}
+                          </h3>
+                          <img
+                            src="https://dd.dexscreener.com/ds-data/tokens/base/0xddf7d080c82b8048baae54e376a3406572429b4e.png?size=lg&key=18ea46"
+                            alt=""
+                            className="w-5 h-5 rounded-full"
+                          />
+                        </div>
+                        <div className="flex justify-start ms-2 font-mono font-bold text-white text-[10px] mt-1 gap-1">
+                          <h3 className="mt-0.5">
+                            Sell Price: {item?.sellPrice}
+                          </h3>
+                          <img
+                            src="https://dd.dexscreener.com/ds-data/tokens/base/0xddf7d080c82b8048baae54e376a3406572429b4e.png?size=lg&key=18ea46"
+                            alt=""
+                            className="w-5 h-5 rounded-full"
                           />
                         </div>
                         <div className="flex justify-start ms-2 font-mono font-bold text-white text-[10px] mt-1">
@@ -513,7 +496,6 @@ function FriendTechPools() {
                                                 e.stopPropagation();
                                               }}
                                               onChange={(e) => {
-                                                console.log(e.target.value);
                                                 setInput(e.target.value);
                                               }}
                                             />
@@ -595,7 +577,6 @@ function FriendTechPools() {
                                                 e.stopPropagation();
                                               }}
                                               onChange={(e) => {
-                                                console.log(e.target.value);
                                                 setInput(e.target.value);
                                               }}
                                             />
@@ -672,7 +653,6 @@ function FriendTechPools() {
                                               e.stopPropagation();
                                             }}
                                             onChange={(e) => {
-                                              console.log(e.target.value);
                                               setInput(e.target.value);
                                             }}
                                           />
@@ -753,7 +733,6 @@ function FriendTechPools() {
                                               e.stopPropagation();
                                             }}
                                             onChange={(e) => {
-                                              console.log(e.target.value);
                                               setInput(e.target.value);
                                             }}
                                           />

@@ -61,7 +61,6 @@ function FriendSwap(props) {
   }
 
   async function getShareBalance(id) {
-    console.log(id);
     try {
       const balanceResult = await readContract(config, {
         abi: FriendTechABI,

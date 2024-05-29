@@ -47,9 +47,6 @@ function MyPools() {
       await w0.switchChain(8453);
     });
   }, [w0]);
-  // useEffect(() => {
-  //   console.log(selectedShare);
-  // }, [selectedShare]);
 
   async function acitvateLoading() {
     setLoading(true);
@@ -150,7 +147,6 @@ function MyPools() {
     const network = await provider.getNetwork();
     const signer = await provider?.getSigner();
     const address = await signer?.getAddress();
-    console.log(signer);
     if (network?.chainId !== 8453) {
       await addNetwork();
     }
@@ -159,13 +155,9 @@ function MyPools() {
       SudoSwapABI,
       signer
     );
-    console.log(shareInfo.id);
-    console.log(w0?.address);
-    console.log(spotPrice);
 
     //the spot price has to be the shares current price calculate din goddog value
     try {
-      console.log("running");
       const parameters = [
         "0xDDf7d080C82b8048BAAe54e376a3406572429b4e", // token
         "0xbeea45F16D512a01f7E2a3785458D4a7089c8514", // nft

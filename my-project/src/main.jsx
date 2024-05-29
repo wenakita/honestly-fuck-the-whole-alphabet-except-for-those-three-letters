@@ -20,7 +20,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             appearance: {
               theme: "dark",
             },
-            loginMethods: ["email", "google", "wallet", "farcaster"],
+            loginMethods: ["email", "wallet", "google", "farcaster"],
             embeddedWallets: {
               createOnLogin: "users-without-wallets",
             },

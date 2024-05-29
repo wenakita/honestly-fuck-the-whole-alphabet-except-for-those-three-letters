@@ -22,7 +22,7 @@ function SearchBar() {
   const [resultType, setResultType] = useState("user");
   useEffect(() => {
     getActivePools();
-  }, [activateResults]);
+  }, [searchPools, activateResults]);
   useEffect(() => {
     if (searchUsers) {
       if (input.includes("0x")) {
@@ -319,8 +319,13 @@ function SearchBar() {
                               {item?.friendTechData?.ftName}
                             </h3>
                           </div>
-                          <div className="flex justify-center text-white gap-2 text-[10px]">
-                            LP: {uintFormat(item?.sudoSwapData?.spotPrice)}
+                          <div className="flex justify-center text-white gap-1 text-[8px]">
+                            <h3 className="mt-0.5">
+                              LP:{" "}
+                              {uintFormat(
+                                item?.sudoSwapData?.spotPrice
+                              ).toFixed(2)}
+                            </h3>
                             <img
                               src="https://dd.dexscreener.com/ds-data/tokens/base/0xddf7d080c82b8048baae54e376a3406572429b4e.png?size=lg&key=18ea46"
                               alt=""
