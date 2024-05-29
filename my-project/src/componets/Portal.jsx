@@ -27,7 +27,7 @@ function Portal() {
     }
   });
   return (
-    <div className="mt-20">
+    <div className="mt-20 mb-20">
       <div className="flex justify-center">
         <img
           src="https://ivory-accurate-pig-375.mypinata.cloud/ipfs/QmVg8EcB3EE9GTNbjF6uvrcQ3i8QG6TRhYT8Aa3SmmXNBX?pinataGatewayToken=DdSIfjJJunjBBaGpRA4VE7rw9Q3bNil3avaM8VrHQkPRh_2vaSMuwGFYGbn9Xzt2"
