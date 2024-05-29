@@ -11,30 +11,22 @@ console.log(import.meta.env.VITE_NEXT_PUBLIC_PRIVY_APP_ID);
 const queryClient = new QueryClient();
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <WagmiProvider config={config}>
-      <QueryClientProvider client={queryClient}>
-        <PrivyProvider
-          appId={import.meta.env.VITE_NEXT_PUBLIC_PRIVY_APP_ID}
-          config={{
-            appearance: {
-              theme: "dark",
-            },
-            loginMethods: [
-              "email",
-              "wallet",
-              "google",
-              "farcaster",
-              "telegram",
-            ],
-            embeddedWallets: {
-              createOnLogin: "users-without-wallets",
-            },
-          }}
-        >
-          <App />
-        </PrivyProvider>
-      </QueryClientProvider>
-    </WagmiProvider>
-  </React.StrictMode>
+  <WagmiProvider config={config}>
+    <QueryClientProvider client={queryClient}>
+      <PrivyProvider
+        appId={import.meta.env.VITE_NEXT_PUBLIC_PRIVY_APP_ID}
+        config={{
+          appearance: {
+            theme: "dark",
+          },
+          loginMethods: ["email", "wallet", "google", "farcaster", "telegram"],
+          embeddedWallets: {
+            createOnLogin: "users-without-wallets",
+          },
+        }}
+      >
+        <App />
+      </PrivyProvider>
+    </QueryClientProvider>
+  </WagmiProvider>
 );
