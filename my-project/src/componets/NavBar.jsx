@@ -48,16 +48,16 @@ function NavBar() {
             />
             <h3 className="text-white mt-2 text-[10px]">{oooPrice}</h3>
           </Link>
-          <Link to="*" className="text-white text-center p-5 mt-2 font-bold ">
-            Notion
-          </Link>
-
           <Link
             to="/home"
             className="text-white text-center p-5 mt-2 font-bold"
           >
             Home
           </Link>
+          <Link to="*" className="text-white text-center p-5 mt-2 font-bold ">
+            Notion
+          </Link>
+
           <Link
             to="/pools"
             className="text-white text-center p-5 mt-2 font-bold "
