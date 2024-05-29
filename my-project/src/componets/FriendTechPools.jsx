@@ -774,7 +774,7 @@ function FriendTechPools() {
                                 </Menu>
                               ) : (
                                 <button className="border text-center p-1 bg-black rounded-xl border-slate-500 ">
-                                  Tranding not available
+                                  Trading not available
                                 </button>
                               )}
                             </>
