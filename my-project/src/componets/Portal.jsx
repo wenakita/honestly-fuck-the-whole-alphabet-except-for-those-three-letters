@@ -19,9 +19,7 @@ function Portal() {
     address: wallet?.address,
   });
   useEffect(() => {
-    if (authenticated) {
-      console.log(address);
-      console.log(userEthBalance?.data?.formatted);
+    if (authenticated && wallet) {
       // const formattedBalance = Number(userEthBalance?.data?.formatted);
       // console.log(formattedBalance);
       // if ()
@@ -47,12 +45,14 @@ function Portal() {
             Logout
           </button>
         ) : (
-          <button
-            className="border border-slate-500 rounded-lg text-white p-2 text-[20px] hover:bg-white hover:text-black"
-            onClick={login}
-          >
-            FriendMint Login
-          </button>
+          <>
+            <button
+              className="border border-slate-500 rounded-lg text-white p-2 text-[20px] hover:bg-white hover:text-black"
+              onClick={login}
+            >
+              FriendMint Login
+            </button>
+          </>
         )}
       </div>
     </div>
