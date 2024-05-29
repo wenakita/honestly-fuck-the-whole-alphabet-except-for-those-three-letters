@@ -19,7 +19,7 @@ function Portal() {
     address: wallet?.address,
   });
   useEffect(() => {
-    if (authenticated && wallet) {
+    if (ready && authenticated && wallet) {
       // const formattedBalance = Number(userEthBalance?.data?.formatted);
       // console.log(formattedBalance);
       // if ()
